@@ -141,6 +141,7 @@
   .panel h3::before{content:""; width:4px; height:16px; background:var(--orange); display:inline-block; border-radius:1px;}
 
   /* ===== Table ===== */
+  .table-scroll{overflow-x:auto; -webkit-overflow-scrolling:touch;}
   table{width:100%; border-collapse:collapse; font-size:var(--fs-base);}
   thead th{
     text-align:left; font-size:var(--fs-sm); color:#fff; font-weight:700;
@@ -148,7 +149,7 @@
   }
   thead th:first-child{border-radius:5px 0 0 0;}
   thead th:last-child{border-radius:0 5px 0 0;}
-  tbody td{padding:11px 10px; border-bottom:1px solid var(--line); vertical-align:middle;}
+  tbody td{padding:11px 10px; border-bottom:1px solid var(--line); vertical-align:middle; white-space:nowrap;}
   tbody tr:hover{background:#F7F9FC;}
   tbody tr:last-child td{border-bottom:none;}
   tbody tr.sum td{background:#F1F4F9; font-weight:800; border-top:1.5px solid var(--navy);}
@@ -288,12 +289,12 @@
       <div class="grid-2">
         <div class="panel">
           <h3>동호회별 현황</h3>
-          <table>
+          <div class="table-scroll"><table>
             <thead>
               <tr><th>NO</th><th>동호회명(권역)</th><th>활동여부</th><th>활동횟수</th><th>누적인원</th><th>회원수</th><th>고문/회장</th><th>총무1</th><th>총무2</th><th>비고</th></tr>
             </thead>
             <tbody id="new-table"></tbody>
-          </table>
+          </table></div>
         </div>
         <div class="panel">
           <h3>권역별 누적 활동인원</h3>
@@ -306,12 +307,12 @@
       <div class="grid-2">
         <div class="panel">
           <h3>동호회별 현황</h3>
-          <table>
+          <div class="table-scroll"><table>
             <thead>
               <tr><th>NO</th><th>동호회명(종목)</th><th>활동여부</th><th>활동횟수</th><th>누적인원</th><th>회원수</th><th>고문</th><th>회장</th><th>총무</th><th>비고</th></tr>
             </thead>
             <tbody id="existing-table"></tbody>
-          </table>
+          </table></div>
         </div>
         <div class="panel">
           <h3>종목별 누적 활동인원</h3>
