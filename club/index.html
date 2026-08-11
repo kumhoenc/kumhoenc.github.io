@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
+<html lang="ko" style="--header-h: 114.66667175292969px;"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>2026년 사내동호회 운영 현황</title>
@@ -231,10 +230,10 @@
   <div class="wrap header-inner">
     <div class="header-title">
       <h1>2026년 사내동호회 활동 현황</h1>
-      <div class="period">집계기간 <span class="period-edit" id="period-header" contenteditable="true" spellcheck="false" oninput="syncPeriod(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">3월~8월 첫째 주</span> &nbsp;|&nbsp; 쿼터활동제 : 1Q(3·4·5월) · 2Q(6·7·8월) · 3Q(9·10·11월)</div>
+      <div class="period">집계기간 <span class="period-edit" id="period-header" contenteditable="true" spellcheck="false" oninput="syncPeriod(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">3월~8월 둘째 주</span> &nbsp;|&nbsp; 쿼터활동제 : 1Q(3·4·5월) · 2Q(6·7·8월) · 3Q(9·10·11월)</div>
     </div>
     <div class="header-right">
-      <div class="updated-badge">최근 업데이트 : <span id="updated-at">-</span></div>
+      <div class="updated-badge">최근 업데이트 : <span id="updated-at">2026-08-11</span></div>
       <nav>
         <a href="#clubs" onclick="switchTab('new')">신규동호회</a>
         <a href="#clubs" onclick="switchTab('existing')">기존동호회</a>
@@ -250,7 +249,7 @@
     <label class="pill pill-orange" for="file-input">엑셀 업로드</label>
     <input type="file" id="file-input" accept=".xlsx,.xls" onchange="handleUpload(event)">
     <button class="pill pill-navy" onclick="saveAsHtml()">HTML로 저장</button>
-    <span id="upload-status"></span>
+    <span id="upload-status" class=""></span>
   </div>
 </div>
 
@@ -258,34 +257,34 @@
   <div class="kpi-row">
     <div class="kpi">
       <div class="label">전체 동호회</div>
-      <div class="value" id="kpi-total">-<span>개</span></div>
-      <div class="foot" id="kpi-total-foot">-</div>
+      <div class="value" id="kpi-total">13<span>개</span></div>
+      <div class="foot" id="kpi-total-foot">신규 5개 · 기존 8개</div>
     </div>
     <div class="kpi">
       <div class="label">활동 동호회</div>
-      <div class="value" id="kpi-active">-<span>개</span></div>
-      <div class="foot" id="kpi-active-foot">-</div>
+      <div class="value" id="kpi-active">9<span>개</span></div>
+      <div class="foot" id="kpi-active-foot">신규 <b>3/5</b> (60%) · 기존 <b>6/8</b> (75%)</div>
     </div>
     <div class="kpi">
       <div class="label">누적 활동인원</div>
-      <div class="value" id="kpi-ppl">-<span>명</span></div>
-      <div class="foot" id="kpi-ppl-foot">-</div>
+      <div class="value" id="kpi-ppl">141<span>명</span></div>
+      <div class="foot" id="kpi-ppl-foot">전체 회원수 213명</div>
     </div>
   </div>
 
   <!-- ================= 사내동호회 활동 현황 (탭) ================= -->
   <section id="clubs">
     <div class="sec-head-row">
-      <div class="sec-head"><span class="sec-icon">◆</span><span class="sec-title">사내동호회 활동 현황(<span class="period-edit" id="period-section" contenteditable="true" spellcheck="false" oninput="syncPeriod(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">3월~8월 첫째 주</span>)</span></div>
+      <div class="sec-head"><span class="sec-icon">◆</span><span class="sec-title">사내동호회 활동 현황(<span class="period-edit" id="period-section" contenteditable="true" spellcheck="false" oninput="syncPeriod(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">3월~8월 둘째 주</span>)</span></div>
       <div class="tab-group">
         <button class="tab-btn active" data-tab="new" onclick="switchTab('new')">신규동호회 <span class="tab-count" id="tab-count-new">5개</span></button>
         <button class="tab-btn" data-tab="existing" onclick="switchTab('existing')">기존동호회 <span class="tab-count" id="tab-count-existing">8개</span></button>
       </div>
     </div>
-    <div class="sec-desc" id="clubs-desc">-</div>
+    <div class="sec-desc" id="clubs-desc">5개 권역 신규 개설 · 3개 활동중 / 2개 미활동(60%)</div>
     <div class="rule"></div>
 
-    <div id="tab-new" class="tab-panel">
+    <div id="tab-new" class="tab-panel" style="">
       <div class="grid-2">
         <div class="panel">
           <h3>동호회별 현황</h3>
@@ -293,17 +292,84 @@
             <thead>
               <tr><th>NO</th><th>동호회명(권역)</th><th>활동여부</th><th>활동횟수</th><th>누적인원</th><th>회원수</th><th>고문/회장</th><th>총무1</th><th>총무2</th><th>비고</th></tr>
             </thead>
-            <tbody id="new-table"></tbody>
+            <tbody id="new-table">
+    <tr>
+      <td class="num">1</td>
+      <td><div class="club-name">함안버디</div><div class="club-sub">경상권</div></td>
+      <td><span class="badge active">활동중</span></td>
+      <td class="num">2</td>
+      <td class="num">16</td>
+      <td class="num">13</td>
+      <td>김홍용 수석</td>
+      <td>노주연 매니저</td>
+      <td>-</td>
+      <td class="note"></td>
+    </tr>
+  
+    <tr>
+      <td class="num">2</td>
+      <td><div class="club-name">오비는 장비탓!</div><div class="club-sub">충청권</div></td>
+      <td><span class="badge active">활동중</span></td>
+      <td class="num">1</td>
+      <td class="num">8</td>
+      <td class="num">11</td>
+      <td>박인근 수석</td>
+      <td>강정인 수석</td>
+      <td>김승준 매니저</td>
+      <td class="note">8월 내 활동 예정</td>
+    </tr>
+  
+    <tr>
+      <td class="num">3</td>
+      <td><div class="club-name">볼처리 UNITED</div><div class="club-sub">강원권</div></td>
+      <td><span class="badge active">활동중</span></td>
+      <td class="num">1</td>
+      <td class="num">3</td>
+      <td class="num">9</td>
+      <td>이준형 수석</td>
+      <td>박대웅 수석</td>
+      <td>차승배 수석</td>
+      <td class="note">8월 내 활동 예정</td>
+    </tr>
+  
+    <tr>
+      <td class="num">4</td>
+      <td><div class="club-name">ESG</div><div class="club-sub">수도권</div></td>
+      <td><span class="badge inactive">미활동</span></td>
+      <td class="num">0</td>
+      <td class="num">0</td>
+      <td class="num">13</td>
+      <td>안민규 수석</td>
+      <td>김승윤 매니저</td>
+      <td>한대희 매니저</td>
+      <td class="note"></td>
+    </tr>
+  
+    <tr>
+      <td class="num">5</td>
+      <td><div class="club-name">굿샷이랑께</div><div class="club-sub">호남권</div></td>
+      <td><span class="badge inactive">미활동</span></td>
+      <td class="num">0</td>
+      <td class="num">0</td>
+      <td class="num">13</td>
+      <td>안우용 수석</td>
+      <td>박시형 매니저</td>
+      <td>남민서 매니저</td>
+      <td class="note">8월 내 활동 예정</td>
+    </tr>
+  
+    <tr class="sum"><td colspan="3">계</td><td class="num">4</td><td class="num">27</td><td class="num">59</td><td colspan="4"></td></tr>
+  </tbody>
           </table></div>
         </div>
         <div class="panel">
           <h3>권역별 누적 활동인원</h3>
-          <div class="chart-box tall"><canvas id="newChart"></canvas></div>
+          <div class="chart-box tall"><canvas id="newChart" style="box-sizing: border-box; display: block; height: 440px; width: 588px;" width="882" height="660"></canvas></div>
         </div>
       </div>
     </div>
 
-    <div id="tab-existing" class="tab-panel" style="display:none;">
+    <div id="tab-existing" class="tab-panel" style="display: none;">
       <div class="grid-2">
         <div class="panel">
           <h3>동호회별 현황</h3>
@@ -311,12 +377,118 @@
             <thead>
               <tr><th>NO</th><th>동호회명(종목)</th><th>활동여부</th><th>활동횟수</th><th>누적인원</th><th>회원수</th><th>고문</th><th>회장</th><th>총무</th><th>비고</th></tr>
             </thead>
-            <tbody id="existing-table"></tbody>
+            <tbody id="existing-table">
+    <tr>
+      <td class="num">1</td>
+      <td><div class="club-name">KRC</div><div class="club-sub">러닝</div></td>
+      <td><span class="badge active">활동중</span></td>
+      <td class="num">3</td>
+      <td class="num">49</td>
+      <td class="num">22</td>
+      <td>문왕현 전무</td>
+      <td>이상진 수석</td>
+      <td>김명호 매니저</td>
+      <td class="note"></td>
+    </tr>
+  
+    <tr>
+      <td class="num">2</td>
+      <td><div class="club-name">건우회</div><div class="club-sub">등산</div></td>
+      <td><span class="badge active">활동중</span></td>
+      <td class="num">3</td>
+      <td class="num">9</td>
+      <td class="num">14</td>
+      <td>최수환 상무</td>
+      <td>정상윤 수석</td>
+      <td>송가영 매니저</td>
+      <td class="note"></td>
+    </tr>
+  
+    <tr>
+      <td class="num">3</td>
+      <td><div class="club-name">빛사랑2.0</div><div class="club-sub">사진</div></td>
+      <td><span class="badge active">활동중</span></td>
+      <td class="num">2</td>
+      <td class="num">21</td>
+      <td class="num">22</td>
+      <td>설용훈 상무</td>
+      <td>김남훈 수석</td>
+      <td>이연학 수석</td>
+      <td class="note">'26년 활동 재개</td>
+    </tr>
+  
+    <tr>
+      <td class="num">4</td>
+      <td><div class="club-name">MADNESS</div><div class="club-sub">농구</div></td>
+      <td><span class="badge active">활동중</span></td>
+      <td class="num">2</td>
+      <td class="num">17</td>
+      <td class="num">17</td>
+      <td>이원준 상무</td>
+      <td>채승우 수석</td>
+      <td>김선규 매니저</td>
+      <td class="note"></td>
+    </tr>
+  
+    <tr>
+      <td class="num">5</td>
+      <td><div class="club-name">금호FC</div><div class="club-sub">축구</div></td>
+      <td><span class="badge active">활동중</span></td>
+      <td class="num">1</td>
+      <td class="num">10</td>
+      <td class="num">28</td>
+      <td>박민규 상무</td>
+      <td>한재홍 수석</td>
+      <td>유성환 매니저</td>
+      <td class="note"></td>
+    </tr>
+  
+    <tr>
+      <td class="num">6</td>
+      <td><div class="club-name">K-클라이머스</div><div class="club-sub">클라이밍</div></td>
+      <td><span class="badge active">활동중</span></td>
+      <td class="num">1</td>
+      <td class="num">8</td>
+      <td class="num">17</td>
+      <td>이관상 전무</td>
+      <td>박민구 수석</td>
+      <td>송철우 수석</td>
+      <td class="note"></td>
+    </tr>
+  
+    <tr>
+      <td class="num">7</td>
+      <td><div class="club-name">KH밌는영화</div><div class="club-sub">영화</div></td>
+      <td><span class="badge inactive">미활동</span></td>
+      <td class="num">0</td>
+      <td class="num">0</td>
+      <td class="num">20</td>
+      <td>김창영 상무</td>
+      <td>박재형 수석</td>
+      <td>정한울 매니저</td>
+      <td class="note">8월 내 활동 예정</td>
+    </tr>
+  
+    <tr>
+      <td class="num">8</td>
+      <td><div class="club-name">금호이글스</div><div class="club-sub">스크린골프</div></td>
+      <td><span class="badge inactive">미활동</span></td>
+      <td class="num">0</td>
+      <td class="num">0</td>
+      <td class="num">14</td>
+      <td>정연준 전무</td>
+      <td>박철수 수석</td>
+      <td>이명형 수석</td>
+      <td class="note">8월 내 활동 예정</td>
+    </tr>
+  
+    <tr class="sum"><td colspan="3">계</td><td class="num">12</td><td class="num">114</td><td class="num">154</td><td colspan="4"></td></tr>
+  </tbody>
           </table></div>
         </div>
         <div class="panel">
           <h3>종목별 누적 활동인원</h3>
-          <div class="chart-box tall"><canvas id="existingChart"></canvas></div>
+          <div class="chart-box tall"><canvas id="existingChart" style="box-sizing: border-box; display: block; height: 624px; width: 588px;" width="882" height="936"></canvas></div>
         </div>
       </div>
     </div>
@@ -330,28 +502,185 @@
 </footer>
 
 <!-- 데이터 저장소 : 업로드/저장 시 이 태그의 내용이 갱신됩니다 -->
-<script type="application/json" id="dashboard-data">
-{
-  "meta": { "period": "3월~8월 첫째 주", "updatedAt": "2026-08-06" },
+<script type="application/json" id="dashboard-data">{
+  "meta": {
+    "period": "3월~8월 둘째 주",
+    "updatedAt": "2026-08-11"
+  },
   "new": [
-    {"no":1, "name":"함안버디", "region":"경상권", "status":"active", "cnt":2, "ppl":16, "mem":13, "lead":"김홍용 수석", "t1":"노주연 매니저", "t2":"-", "note":""},
-    {"no":2, "name":"오비는 장비탓!", "region":"충청권", "status":"active", "cnt":1, "ppl":8, "mem":11, "lead":"박인근 수석", "t1":"강정인 수석", "t2":"김승준 매니저", "note":"8월 내 활동 예정"},
-    {"no":3, "name":"볼처리 UNITED", "region":"강원권", "status":"active", "cnt":1, "ppl":3, "mem":9, "lead":"이준형 수석", "t1":"박대웅 수석", "t2":"차승배 수석", "note":"8월 내 활동 예정"},
-    {"no":4, "name":"ESG", "region":"수도권", "status":"inactive", "cnt":0, "ppl":0, "mem":13, "lead":"안민규 수석", "t1":"김승윤 매니저", "t2":"한대희 매니저", "note":""},
-    {"no":5, "name":"굿샷이랑께", "region":"호남권", "status":"inactive", "cnt":0, "ppl":0, "mem":13, "lead":"안우용 수석", "t1":"박시형 매니저", "t2":"남민서 매니저", "note":""}
+    {
+      "no": 1,
+      "name": "함안버디",
+      "region": "경상권",
+      "status": "active",
+      "cnt": 2,
+      "ppl": 16,
+      "mem": 13,
+      "lead": "김홍용 수석",
+      "t1": "노주연 매니저",
+      "t2": "-",
+      "note": ""
+    },
+    {
+      "no": 2,
+      "name": "오비는 장비탓!",
+      "region": "충청권",
+      "status": "active",
+      "cnt": 1,
+      "ppl": 8,
+      "mem": 11,
+      "lead": "박인근 수석",
+      "t1": "강정인 수석",
+      "t2": "김승준 매니저",
+      "note": "8월 내 활동 예정"
+    },
+    {
+      "no": 3,
+      "name": "볼처리 UNITED",
+      "region": "강원권",
+      "status": "active",
+      "cnt": 1,
+      "ppl": 3,
+      "mem": 9,
+      "lead": "이준형 수석",
+      "t1": "박대웅 수석",
+      "t2": "차승배 수석",
+      "note": "8월 내 활동 예정"
+    },
+    {
+      "no": 4,
+      "name": "ESG",
+      "region": "수도권",
+      "status": "inactive",
+      "cnt": 0,
+      "ppl": 0,
+      "mem": 13,
+      "lead": "안민규 수석",
+      "t1": "김승윤 매니저",
+      "t2": "한대희 매니저",
+      "note": ""
+    },
+    {
+      "no": 5,
+      "name": "굿샷이랑께",
+      "region": "호남권",
+      "status": "inactive",
+      "cnt": 0,
+      "ppl": 0,
+      "mem": 13,
+      "lead": "안우용 수석",
+      "t1": "박시형 매니저",
+      "t2": "남민서 매니저",
+      "note": "8월 내 활동 예정"
+    }
   ],
   "existing": [
-    {"no":1, "name":"KRC", "sport":"러닝", "status":"active", "cnt":3, "ppl":49, "mem":22, "advisor":"문왕현 전무", "president":"이상진 수석", "manager":"김명호 매니저", "note":""},
-    {"no":2, "name":"건우회", "sport":"등산", "status":"active", "cnt":3, "ppl":9, "mem":14, "advisor":"최수환 상무", "president":"정상윤 수석", "manager":"송가영 매니저", "note":""},
-    {"no":3, "name":"빛사랑2.0", "sport":"사진", "status":"active", "cnt":2, "ppl":21, "mem":22, "advisor":"설용훈 상무", "president":"김남훈 수석", "manager":"이연학 수석", "note":"'26년 활동 재개"},
-    {"no":4, "name":"MADNESS", "sport":"농구", "status":"active", "cnt":2, "ppl":17, "mem":17, "advisor":"이원준 상무", "president":"채승우 수석", "manager":"김선규 매니저", "note":""},
-    {"no":5, "name":"금호FC", "sport":"축구", "status":"active", "cnt":1, "ppl":10, "mem":28, "advisor":"박민규 상무", "president":"한재홍 수석", "manager":"유성환 매니저", "note":""},
-    {"no":6, "name":"K-클라이머스", "sport":"클라이밍", "status":"active", "cnt":1, "ppl":8, "mem":17, "advisor":"이관상 전무", "president":"박민구 수석", "manager":"송철우 수석", "note":""},
-    {"no":7, "name":"KH밌는영화", "sport":"영화", "status":"inactive", "cnt":0, "ppl":0, "mem":20, "advisor":"김창영 상무", "president":"박재형 수석", "manager":"정한울 매니저", "note":"8월 내 활동 예정"},
-    {"no":8, "name":"금호이글스", "sport":"스크린골프", "status":"inactive", "cnt":0, "ppl":0, "mem":14, "advisor":"정연준 전무", "president":"박철수 수석", "manager":"이명형 수석", "note":"8월 내 활동 예정"}
+    {
+      "no": 1,
+      "name": "KRC",
+      "sport": "러닝",
+      "status": "active",
+      "cnt": 3,
+      "ppl": 49,
+      "mem": 22,
+      "advisor": "문왕현 전무",
+      "president": "이상진 수석",
+      "manager": "김명호 매니저",
+      "note": ""
+    },
+    {
+      "no": 2,
+      "name": "건우회",
+      "sport": "등산",
+      "status": "active",
+      "cnt": 3,
+      "ppl": 9,
+      "mem": 14,
+      "advisor": "최수환 상무",
+      "president": "정상윤 수석",
+      "manager": "송가영 매니저",
+      "note": ""
+    },
+    {
+      "no": 3,
+      "name": "빛사랑2.0",
+      "sport": "사진",
+      "status": "active",
+      "cnt": 2,
+      "ppl": 21,
+      "mem": 22,
+      "advisor": "설용훈 상무",
+      "president": "김남훈 수석",
+      "manager": "이연학 수석",
+      "note": "'26년 활동 재개"
+    },
+    {
+      "no": 4,
+      "name": "MADNESS",
+      "sport": "농구",
+      "status": "active",
+      "cnt": 2,
+      "ppl": 17,
+      "mem": 17,
+      "advisor": "이원준 상무",
+      "president": "채승우 수석",
+      "manager": "김선규 매니저",
+      "note": ""
+    },
+    {
+      "no": 5,
+      "name": "금호FC",
+      "sport": "축구",
+      "status": "active",
+      "cnt": 1,
+      "ppl": 10,
+      "mem": 28,
+      "advisor": "박민규 상무",
+      "president": "한재홍 수석",
+      "manager": "유성환 매니저",
+      "note": ""
+    },
+    {
+      "no": 6,
+      "name": "K-클라이머스",
+      "sport": "클라이밍",
+      "status": "active",
+      "cnt": 1,
+      "ppl": 8,
+      "mem": 17,
+      "advisor": "이관상 전무",
+      "president": "박민구 수석",
+      "manager": "송철우 수석",
+      "note": ""
+    },
+    {
+      "no": 7,
+      "name": "KH밌는영화",
+      "sport": "영화",
+      "status": "inactive",
+      "cnt": 0,
+      "ppl": 0,
+      "mem": 20,
+      "advisor": "김창영 상무",
+      "president": "박재형 수석",
+      "manager": "정한울 매니저",
+      "note": "8월 내 활동 예정"
+    },
+    {
+      "no": 8,
+      "name": "금호이글스",
+      "sport": "스크린골프",
+      "status": "inactive",
+      "cnt": 0,
+      "ppl": 0,
+      "mem": 14,
+      "advisor": "정연준 전무",
+      "president": "박철수 수석",
+      "manager": "이명형 수석",
+      "note": "8월 내 활동 예정"
+    }
   ]
-}
-</script>
+}</script>
 
 <script>
 let DATA = null;
@@ -618,5 +947,6 @@ syncHeaderHeight();
 
 loadData();
 </script>
-</body>
-</html>
+
+
+</body></html>
