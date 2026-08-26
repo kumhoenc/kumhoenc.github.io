@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko" style="--header-h: 114.66667175292969px;"><head>
+<html lang="ko" style="--header-h: 115px;"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>2026년 사내동호회 운영 현황</title>
@@ -126,7 +126,9 @@
     font-size:var(--fs-xs); font-weight:800; color:var(--sub); background:#EEF1F5;
     border-radius:999px; padding:1px 8px;
   }
-  .tab-btn:hover{border-color:var(--navy); color:var(--navy);}
+  .tab-btn{background:#C1DAF2; border-color:#C1DAF2; color:var(--navy);}
+  .tab-btn .tab-count{background:rgba(36,42,92,.12); color:var(--navy);}
+  .tab-btn:hover{filter:brightness(0.96);}
   .tab-btn.active{background:var(--navy); border-color:var(--navy); color:#fff;}
   .tab-btn.active .tab-count{background:rgba(255,255,255,.22); color:#fff;}
   .cat-tag{display:inline-block; font-size:var(--fs-xs); font-weight:700; padding:3px 9px; border-radius:3px; background:#EDEFF5; color:var(--navy);}
@@ -204,7 +206,9 @@
 
   /* ===== Toolbar ===== */
   .toolbar{background:#fff; border-bottom:1px solid var(--line); box-shadow:0 4px 14px -10px rgba(8,23,41,.15);}
-  .toolbar-inner{display:flex; align-items:center; justify-content:flex-end; gap:10px; flex-wrap:wrap; padding:14px clamp(20px, 2.4vw, 48px);}
+  .toolbar-inner{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; padding:14px clamp(20px, 2.4vw, 48px);}
+  .toolbar-tabs{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
+  .toolbar-actions{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
   .pill{
     display:inline-flex; align-items:center; gap:6px; font-size:var(--fs-sm); font-weight:700;
     padding:9px 20px; border-radius:999px; cursor:pointer; border:1.5px solid transparent;
@@ -243,15 +247,10 @@
   <div class="wrap header-inner">
     <div class="header-title">
       <h1>2026년 사내동호회 활동 현황</h1>
-      <div class="period">집계기간 <span class="period-edit" id="period-header" contenteditable="true" spellcheck="false" oninput="syncPeriod(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">3월~8월 둘째 주</span> &nbsp;|&nbsp; 쿼터활동제 : 1Q(3·4·5월) · 2Q(6·7·8월) · 3Q(9·10·11월)</div>
+      <div class="period">집계기간 <span class="period-edit" id="period-header" contenteditable="true" spellcheck="false" oninput="syncPeriod(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">3월~8월 넷째 주</span> &nbsp;|&nbsp; 쿼터활동제 : 1Q(3·4·5월) · 2Q(6·7·8월) · 3Q(9·10·11월)</div>
     </div>
     <div class="header-right">
-      <div class="updated-badge">최근 업데이트 : <span id="updated-at">2026-08-13</span></div>
-      <nav>
-        <a href="#clubs" onclick="switchTab('all')">전체</a>
-        <a href="#clubs" onclick="switchTab('new')">신규동호회</a>
-        <a href="#clubs" onclick="switchTab('existing')">기존동호회</a>
-      </nav>
+      <div class="updated-badge">최근 업데이트 : <span id="updated-at">2026-08-26</span></div>
     </div>
 
   </div>
@@ -259,11 +258,18 @@
 
 <div class="toolbar">
   <div class="wrap toolbar-inner">
-    <button class="pill pill-outline" onclick="downloadTemplate()">양식 다운로드</button>
-    <label class="pill pill-orange" for="file-input">엑셀 업로드</label>
-    <input type="file" id="file-input" accept=".xlsx,.xls" onchange="handleUpload(event)">
-    <button class="pill pill-navy" onclick="saveAsHtml()">HTML로 저장</button>
-    <span id="upload-status" class=""></span>
+    <div class="toolbar-tabs">
+      <button class="tab-btn active" data-tab="all" onclick="switchTab('all')">전체</button>
+      <button class="tab-btn" data-tab="new" onclick="switchTab('new')">신규동호회</button>
+      <button class="tab-btn" data-tab="existing" onclick="switchTab('existing')">기존동호회</button>
+    </div>
+    <div class="toolbar-actions">
+      <button class="pill pill-outline" onclick="downloadTemplate()">양식 다운로드</button>
+      <label class="pill pill-orange" for="file-input">엑셀 업로드</label>
+      <input type="file" id="file-input" accept=".xlsx,.xls" onchange="handleUpload(event)">
+      <button class="pill pill-navy" onclick="saveAsHtml()">HTML로 저장</button>
+      <span id="upload-status" class=""></span>
+    </div>
   </div>
 </div>
 
@@ -281,7 +287,7 @@
     </div>
     <div class="kpi">
       <div class="label">누적 활동인원</div>
-      <div class="value" id="kpi-ppl">149<span>명</span></div>
+      <div class="value" id="kpi-ppl">155<span>명</span></div>
       <div class="foot" id="kpi-ppl-foot">전체 회원수 213명</div>
     </div>
   </div>
@@ -289,7 +295,7 @@
   <!-- ================= 사내동호회 활동 현황 (탭) ================= -->
   <section id="clubs">
     <div class="sec-head-row">
-      <div class="sec-head"><span class="sec-icon">◆</span><span class="sec-title">사내동호회 활동 현황(<span class="period-edit" id="period-section" contenteditable="true" spellcheck="false" oninput="syncPeriod(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">3월~8월 둘째 주</span>)</span></div>
+      <div class="sec-head"><span class="sec-icon">◆</span><span class="sec-title">사내동호회 활동 현황(<span class="period-edit" id="period-section" contenteditable="true" spellcheck="false" oninput="syncPeriod(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">3월~8월 넷째 주</span>)</span></div>
       <div class="tab-group">
         <button class="tab-btn active" data-tab="all" onclick="switchTab('all')">전체 <span class="tab-count" id="tab-count-all">13개</span></button>
         <button class="tab-btn" data-tab="new" onclick="switchTab('new')">신규동호회 <span class="tab-count" id="tab-count-new">5개</span></button>
@@ -310,78 +316,18 @@
             <tbody id="all-table">
     <tr>
       <td class="num">1</td>
-      <td><span class="cat-tag ">신규</span></td>
-      <td><div class="club-name">함안버디</div><div class="club-sub">경상권</div></td>
-      <td><span class="badge active">활동중</span></td>
-      <td class="num">2</td>
-      <td class="num">16</td>
-      <td class="num">13</td>
-      <td class="role-cell"></td><td class="role-cell">김홍용 수석</td><td class="role-cell">노주연 매니저</td><td class="role-cell"></td>
-      <td class="note"></td>
-    </tr>
-  
-    <tr>
-      <td class="num">2</td>
-      <td><span class="cat-tag ">신규</span></td>
-      <td><div class="club-name">오비는 장비탓!</div><div class="club-sub">충청권</div></td>
-      <td><span class="badge active">활동중</span></td>
-      <td class="num">1</td>
-      <td class="num">8</td>
-      <td class="num">11</td>
-      <td class="role-cell"></td><td class="role-cell">박인근 수석</td><td class="role-cell">강정인 수석</td><td class="role-cell">김승준 매니저</td>
-      <td class="note">8월 활동 예정</td>
-    </tr>
-  
-    <tr>
-      <td class="num">3</td>
-      <td><span class="cat-tag ">신규</span></td>
-      <td><div class="club-name">볼처리 UNITED</div><div class="club-sub">강원권</div></td>
-      <td><span class="badge active">활동중</span></td>
-      <td class="num">1</td>
-      <td class="num">3</td>
-      <td class="num">9</td>
-      <td class="role-cell"></td><td class="role-cell">이준형 수석</td><td class="role-cell">박대웅 수석</td><td class="role-cell">차승배 수석</td>
-      <td class="note">8월 활동 예정</td>
-    </tr>
-  
-    <tr>
-      <td class="num">4</td>
-      <td><span class="cat-tag ">신규</span></td>
-      <td><div class="club-name">ESG</div><div class="club-sub">수도권</div></td>
-      <td><span class="badge inactive">미활동</span></td>
-      <td class="num">0</td>
-      <td class="num">0</td>
-      <td class="num">13</td>
-      <td class="role-cell"></td><td class="role-cell">안민규 수석</td><td class="role-cell">김승윤 매니저</td><td class="role-cell">한대희 매니저</td>
-      <td class="note"></td>
-    </tr>
-  
-    <tr>
-      <td class="num">5</td>
-      <td><span class="cat-tag ">신규</span></td>
-      <td><div class="club-name">굿샷이랑께</div><div class="club-sub">호남권</div></td>
-      <td><span class="badge inactive">미활동</span></td>
-      <td class="num">0</td>
-      <td class="num">0</td>
-      <td class="num">13</td>
-      <td class="role-cell"></td><td class="role-cell">안우용 수석</td><td class="role-cell">박시형 매니저</td><td class="role-cell">남민서 매니저</td>
-      <td class="note"></td>
-    </tr>
-  
-    <tr>
-      <td class="num">6</td>
       <td><span class="cat-tag existing">기존</span></td>
       <td><div class="club-name">KRC</div><div class="club-sub">러닝</div></td>
       <td><span class="badge active">활동중</span></td>
-      <td class="num">3</td>
-      <td class="num">49</td>
+      <td class="num">4</td>
+      <td class="num">55</td>
       <td class="num">22</td>
       <td class="role-cell">문왕현 전무</td><td class="role-cell">이상진 수석</td><td class="role-cell">김명호 매니저</td><td class="role-cell"></td>
       <td class="note"></td>
     </tr>
   
     <tr>
-      <td class="num">7</td>
+      <td class="num">2</td>
       <td><span class="cat-tag existing">기존</span></td>
       <td><div class="club-name">건우회</div><div class="club-sub">등산</div></td>
       <td><span class="badge active">활동중</span></td>
@@ -393,7 +339,19 @@
     </tr>
   
     <tr>
-      <td class="num">8</td>
+      <td class="num">3</td>
+      <td><span class="cat-tag ">신규</span></td>
+      <td><div class="club-name">함안버디</div><div class="club-sub">경상권</div></td>
+      <td><span class="badge active">활동중</span></td>
+      <td class="num">2</td>
+      <td class="num">16</td>
+      <td class="num">13</td>
+      <td class="role-cell"></td><td class="role-cell">김홍용 수석</td><td class="role-cell">노주연 매니저</td><td class="role-cell"></td>
+      <td class="note"></td>
+    </tr>
+  
+    <tr>
+      <td class="num">4</td>
       <td><span class="cat-tag existing">기존</span></td>
       <td><div class="club-name">빛사랑2.0</div><div class="club-sub">사진</div></td>
       <td><span class="badge active">활동중</span></td>
@@ -405,7 +363,7 @@
     </tr>
   
     <tr>
-      <td class="num">9</td>
+      <td class="num">5</td>
       <td><span class="cat-tag existing">기존</span></td>
       <td><div class="club-name">MADNESS</div><div class="club-sub">농구</div></td>
       <td><span class="badge active">활동중</span></td>
@@ -417,7 +375,31 @@
     </tr>
   
     <tr>
-      <td class="num">10</td>
+      <td class="num">6</td>
+      <td><span class="cat-tag ">신규</span></td>
+      <td><div class="club-name">오비는 장비탓!</div><div class="club-sub">충청권</div></td>
+      <td><span class="badge active">활동중</span></td>
+      <td class="num">1</td>
+      <td class="num">8</td>
+      <td class="num">11</td>
+      <td class="role-cell"></td><td class="role-cell">박인근 수석</td><td class="role-cell">강정인 수석</td><td class="role-cell">김승준 매니저</td>
+      <td class="note">8월 활동 예정</td>
+    </tr>
+  
+    <tr>
+      <td class="num">7</td>
+      <td><span class="cat-tag ">신규</span></td>
+      <td><div class="club-name">볼처리 UNITED</div><div class="club-sub">강원권</div></td>
+      <td><span class="badge active">활동중</span></td>
+      <td class="num">1</td>
+      <td class="num">3</td>
+      <td class="num">9</td>
+      <td class="role-cell"></td><td class="role-cell">이준형 수석</td><td class="role-cell">박대웅 수석</td><td class="role-cell">차승배 수석</td>
+      <td class="note">8월 활동 예정</td>
+    </tr>
+  
+    <tr>
+      <td class="num">8</td>
       <td><span class="cat-tag existing">기존</span></td>
       <td><div class="club-name">금호FC</div><div class="club-sub">축구</div></td>
       <td><span class="badge active">활동중</span></td>
@@ -429,7 +411,7 @@
     </tr>
   
     <tr>
-      <td class="num">11</td>
+      <td class="num">9</td>
       <td><span class="cat-tag existing">기존</span></td>
       <td><div class="club-name">K-클라이머스</div><div class="club-sub">클라이밍</div></td>
       <td><span class="badge active">활동중</span></td>
@@ -441,7 +423,7 @@
     </tr>
   
     <tr>
-      <td class="num">12</td>
+      <td class="num">10</td>
       <td><span class="cat-tag existing">기존</span></td>
       <td><div class="club-name">KH밌는영화</div><div class="club-sub">영화</div></td>
       <td><span class="badge active">활동중</span></td>
@@ -449,6 +431,30 @@
       <td class="num">8</td>
       <td class="num">20</td>
       <td class="role-cell">김창영 상무</td><td class="role-cell">박재형 수석</td><td class="role-cell">정한울 매니저</td><td class="role-cell"></td>
+      <td class="note"></td>
+    </tr>
+  
+    <tr>
+      <td class="num">11</td>
+      <td><span class="cat-tag ">신규</span></td>
+      <td><div class="club-name">ESG</div><div class="club-sub">수도권</div></td>
+      <td><span class="badge inactive">미활동</span></td>
+      <td class="num">0</td>
+      <td class="num">0</td>
+      <td class="num">13</td>
+      <td class="role-cell"></td><td class="role-cell">안민규 수석</td><td class="role-cell">김승윤 매니저</td><td class="role-cell">한대희 매니저</td>
+      <td class="note"></td>
+    </tr>
+  
+    <tr>
+      <td class="num">12</td>
+      <td><span class="cat-tag ">신규</span></td>
+      <td><div class="club-name">굿샷이랑께</div><div class="club-sub">호남권</div></td>
+      <td><span class="badge inactive">미활동</span></td>
+      <td class="num">0</td>
+      <td class="num">0</td>
+      <td class="num">13</td>
+      <td class="role-cell"></td><td class="role-cell">안우용 수석</td><td class="role-cell">박시형 매니저</td><td class="role-cell">남민서 매니저</td>
       <td class="note"></td>
     </tr>
   
@@ -464,14 +470,14 @@
       <td class="note">8월 활동 예정</td>
     </tr>
   
-    <tr class="sum"><td colspan="4">계</td><td class="num">17</td><td class="num">149</td><td class="num">213</td><td colspan="5"></td></tr>
+    <tr class="sum"><td colspan="4">계</td><td class="num">18</td><td class="num">155</td><td class="num">213</td><td colspan="5"></td></tr>
   </tbody>
           </table></div>
           <div class="table-footnote" id="all-footnote">* 신규(현장)동호회는 회장이 고문을 겸임합니다.</div>
         </div>
         <div class="panel">
           <h3>전체 누적 활동인원</h3>
-          <div class="chart-box tall"><canvas id="allChart" style="box-sizing: border-box; display: block; height: 489px; width: 588px;" width="882" height="734"></canvas></div>
+          <div class="chart-box tall"><canvas id="allChart" style="box-sizing: border-box; display: block; height: 489px; width: 668px;" width="668" height="489"></canvas></div>
         </div>
       </div>
     </div>
@@ -574,8 +580,8 @@
       <td class="num">1</td>
       <td><div class="club-name">KRC</div><div class="club-sub">러닝</div></td>
       <td><span class="badge active">활동중</span></td>
-      <td class="num">3</td>
-      <td class="num">49</td>
+      <td class="num">4</td>
+      <td class="num">55</td>
       <td class="num">22</td>
       <td>문왕현 전무</td>
       <td>이상진 수석</td>
@@ -674,7 +680,7 @@
       <td class="note">8월 활동 예정</td>
     </tr>
   
-    <tr class="sum"><td colspan="3">계</td><td class="num">13</td><td class="num">122</td><td class="num">154</td><td colspan="4"></td></tr>
+    <tr class="sum"><td colspan="3">계</td><td class="num">14</td><td class="num">128</td><td class="num">154</td><td colspan="4"></td></tr>
   </tbody>
           </table></div>
         </div>
@@ -689,15 +695,15 @@
 </div>
 
 <footer>
-  <span>2026년 사내동호회 활동 현황 (<span id="footer-period">3월~8월 첫째주</span>)</span>
+  <span>2026년 사내동호회 활동 현황 (<span id="footer-period">3월~8월 넷째 주</span>)</span>
   <span>금호건설㈜ 인사총무팀</span>
 </footer>
 
 <!-- 데이터 저장소 : 업로드/저장 시 이 태그의 내용이 갱신됩니다 -->
 <script type="application/json" id="dashboard-data">{
   "meta": {
-    "period": "3월~8월 둘째 주",
-    "updatedAt": "2026-08-13"
+    "period": "3월~8월 넷째 주",
+    "updatedAt": "2026-08-26"
   },
   "new": [
     {
@@ -772,8 +778,8 @@
       "name": "KRC",
       "sport": "러닝",
       "status": "active",
-      "cnt": 3,
-      "ppl": 49,
+      "cnt": 4,
+      "ppl": 55,
       "mem": 22,
       "advisor": "문왕현 전무",
       "president": "이상진 수석",
@@ -1195,6 +1201,7 @@ syncHeaderHeight();
 
 loadData();
 </script>
+
 
 
 </body></html>
