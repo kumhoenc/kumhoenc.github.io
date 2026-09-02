@@ -250,7 +250,7 @@
       <div class="period">집계기간 <span class="period-edit" id="period-header" contenteditable="true" spellcheck="false" oninput="syncPeriod(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur();}">3월~9월 첫째 주</span> &nbsp;|&nbsp; 쿼터활동제 : 1Q(3·4·5월) · 2Q(6·7·8월) · 3Q(9·10·11월)</div>
     </div>
     <div class="header-right">
-      <div class="updated-badge">최근 업데이트 : <span id="updated-at">2026-08-31</span></div>
+      <div class="updated-badge">최근 업데이트 : <span id="updated-at">2026-09-02</span></div>
     </div>
 
   </div>
@@ -287,7 +287,7 @@
     </div>
     <div class="kpi">
       <div class="label">누적 활동인원</div>
-      <div class="value" id="kpi-ppl">171<span>명</span></div>
+      <div class="value" id="kpi-ppl">176<span>명</span></div>
       <div class="foot" id="kpi-ppl-foot">전체 회원수 213명</div>
     </div>
   </div>
@@ -376,6 +376,18 @@
   
     <tr>
       <td class="num">6</td>
+      <td><span class="cat-tag ">신규</span></td>
+      <td><div class="club-name">볼처리 UNITED</div><div class="club-sub">강원권</div></td>
+      <td><span class="badge active">활동중</span></td>
+      <td class="num">2</td>
+      <td class="num">8</td>
+      <td class="num">9</td>
+      <td class="role-cell"></td><td class="role-cell">이준형 수석</td><td class="role-cell">박대웅 수석</td><td class="role-cell">차승배 수석</td>
+      <td class="note"></td>
+    </tr>
+  
+    <tr>
+      <td class="num">7</td>
       <td><span class="cat-tag existing">기존</span></td>
       <td><div class="club-name">MADNESS</div><div class="club-sub">농구</div></td>
       <td><span class="badge active">활동중</span></td>
@@ -387,7 +399,7 @@
     </tr>
   
     <tr>
-      <td class="num">7</td>
+      <td class="num">8</td>
       <td><span class="cat-tag existing">기존</span></td>
       <td><div class="club-name">K-클라이머스</div><div class="club-sub">클라이밍</div></td>
       <td><span class="badge active">활동중</span></td>
@@ -395,18 +407,6 @@
       <td class="num">15</td>
       <td class="num">17</td>
       <td class="role-cell">이관상 전무</td><td class="role-cell">박민구 수석</td><td class="role-cell">송철우 수석</td><td class="role-cell"></td>
-      <td class="note"></td>
-    </tr>
-  
-    <tr>
-      <td class="num">8</td>
-      <td><span class="cat-tag ">신규</span></td>
-      <td><div class="club-name">볼처리 UNITED</div><div class="club-sub">강원권</div></td>
-      <td><span class="badge active">활동중</span></td>
-      <td class="num">1</td>
-      <td class="num">3</td>
-      <td class="num">9</td>
-      <td class="role-cell"></td><td class="role-cell">이준형 수석</td><td class="role-cell">박대웅 수석</td><td class="role-cell">차승배 수석</td>
       <td class="note"></td>
     </tr>
   
@@ -470,7 +470,7 @@
       <td class="note"></td>
     </tr>
   
-    <tr class="sum"><td colspan="4">계</td><td class="num">21</td><td class="num">171</td><td class="num">213</td><td colspan="5"></td></tr>
+    <tr class="sum"><td colspan="4">계</td><td class="num">22</td><td class="num">176</td><td class="num">213</td><td colspan="5"></td></tr>
   </tbody>
           </table></div>
           <div class="table-footnote" id="all-footnote">* 신규(현장)동호회는 회장이 고문을 겸임합니다.</div>
@@ -521,8 +521,8 @@
       <td class="num">3</td>
       <td><div class="club-name">볼처리 UNITED</div><div class="club-sub">강원권</div></td>
       <td><span class="badge active">활동중</span></td>
-      <td class="num">1</td>
-      <td class="num">3</td>
+      <td class="num">2</td>
+      <td class="num">8</td>
       <td class="num">9</td>
       <td>이준형 수석</td>
       <td>박대웅 수석</td>
@@ -556,13 +556,13 @@
       <td class="note"></td>
     </tr>
   
-    <tr class="sum"><td colspan="3">계</td><td class="num">5</td><td class="num">33</td><td class="num">59</td><td colspan="4"></td></tr>
+    <tr class="sum"><td colspan="3">계</td><td class="num">6</td><td class="num">38</td><td class="num">59</td><td colspan="4"></td></tr>
   </tbody>
           </table></div>
         </div>
         <div class="panel">
           <h3>권역별 누적 활동인원</h3>
-          <div class="chart-box tall"><canvas id="newChart" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div>
+          <div class="chart-box tall"><canvas id="newChart" style="box-sizing: border-box; display: block; height: 440px; width: 668px;" width="668" height="440"></canvas></div>
         </div>
       </div>
     </div>
@@ -686,7 +686,7 @@
         </div>
         <div class="panel">
           <h3>종목별 누적 활동인원</h3>
-          <div class="chart-box tall"><canvas id="existingChart" style="box-sizing: border-box; display: block; height: 0px; width: 0px;" width="0" height="0"></canvas></div>
+          <div class="chart-box tall"><canvas id="existingChart" style="box-sizing: border-box; display: block; height: 626px; width: 668px;" width="668" height="626"></canvas></div>
         </div>
       </div>
     </div>
@@ -703,7 +703,7 @@
 <script type="application/json" id="dashboard-data">{
   "meta": {
     "period": "3월~9월 첫째 주",
-    "updatedAt": "2026-08-31"
+    "updatedAt": "2026-09-02"
   },
   "new": [
     {
@@ -737,8 +737,8 @@
       "name": "볼처리 UNITED",
       "region": "강원권",
       "status": "active",
-      "cnt": 1,
-      "ppl": 3,
+      "cnt": 2,
+      "ppl": 8,
       "mem": 9,
       "lead": "이준형 수석",
       "t1": "박대웅 수석",
@@ -1201,6 +1201,7 @@ syncHeaderHeight();
 
 loadData();
 </script>
+
 
 
 
