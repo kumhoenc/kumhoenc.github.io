@@ -1,0 +1,2092 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JUST WALK Season 5 · 접수 현황 대시보드</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root{
+    --paper:#F4F6EF;
+    --paper-dim:#EAEDE1;
+    --ink:#20291D;
+    --ink-soft:#5B6752;
+    --trail:#33502F;
+    --trail-deep:#1F3A1E;
+    --grass:#8BAE52;
+    --grass-soft:#DCE8C3;
+    --clay:#B8622B;
+    --clay-soft:#F1DCC9;
+    --line:#D8DECB;
+    --white:#FFFFFF;
+    --radius-card:14px;
+    --radius-chip:999px;
+    --shadow-card: 0 1px 0 rgba(32,41,29,0.04), 0 8px 20px -14px rgba(32,41,29,0.35);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px 80px;}
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position:sticky;
+    top:0;
+    z-index:40;
+    background:
+      radial-gradient(circle at 8% -10%, rgba(227,178,60,0.22) 0, transparent 38%),
+      radial-gradient(circle at 96% 0%, rgba(78,143,168,0.20) 0, transparent 42%),
+      linear-gradient(120deg, #3C6636 0%, var(--trail) 46%, var(--trail-deep) 100%);
+    color:#F4F6EF;
+    padding:20px 24px 16px;
+    overflow:hidden;
+    box-shadow:0 10px 24px -18px rgba(0,0,0,0.55);
+  }
+  .hero::before, .hero::after{
+    content:"";
+    position:absolute;
+    left:0;right:0;
+    height:4px;
+    background:repeating-linear-gradient(90deg,
+      var(--grass) 0 18px,
+      var(--clay) 18px 30px,
+      #E3B23C 30px 42px,
+      #4E8FA8 42px 58px
+    );
+    opacity:0.85;
+  }
+  .hero::before{top:0;}
+  .hero::after{bottom:0;}
+  .hero-inner{max-width:1120px;margin:0 auto;position:relative;z-index:1;}
+  .hero-top-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:10px;
+    flex-wrap:wrap;
+  }
+  .eyebrow-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .season-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    background:rgba(255,255,255,0.14);
+    border:1px solid rgba(255,255,255,0.28);
+    color:#FFF3D6;
+    padding:4px 11px;
+    border-radius:var(--radius-chip);
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:0.01em;
+  }
+  .admin-tools{
+    display:flex;
+    gap:6px;
+    flex-wrap:wrap;
+  }
+  .tool-btn{
+    appearance:none;
+    background:rgba(255,255,255,0.09);
+    border:1px solid rgba(255,255,255,0.18);
+    color:#DCE6CB;
+    font-family:inherit;
+    font-size:11px;
+    font-weight:600;
+    padding:5px 10px;
+    border-radius:8px;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    gap:4px;
+    white-space:nowrap;
+    transition:background .12s ease;
+  }
+  .tool-btn:hover{background:rgba(255,255,255,0.20);}
+  #fileInput{display:none;}
+  .hero h1{
+    font-family:'Pretendard', sans-serif;
+    font-size:clamp(21px, 2.8vw, 26px);
+    font-weight:800;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  .title-row{
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:4px 10px;
+    margin-bottom:12px;
+  }
+  .deadline-chip{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:rgba(227,178,60,0.18);
+    border:1px solid rgba(227,178,60,0.45);
+    color:#FFE9B8;
+    font-size:13px;
+    font-weight:700;
+    padding:5px 12px;
+    border-radius:var(--radius-chip);
+  }
+  .deadline-chip .deadline-label{color:#E9F0DA;font-weight:600;opacity:0.85;}
+  .deadline-chip [contenteditable]{
+    outline:none;
+    border-bottom:1px dashed rgba(255,233,184,0.55);
+    padding:0 2px;
+    min-width:1ch;
+  }
+  .deadline-chip [contenteditable]:focus{
+    border-bottom:1px solid #FFE9B8;
+  }
+  .hero p.sub{
+    display:none;
+  }
+  .quicknav{
+    display:flex;
+    gap:8px;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+  }
+  .quicknav a{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    background:rgba(255,255,255,0.10);
+    border:1px solid rgba(255,255,255,0.22);
+    color:#F4F6EF;
+    text-decoration:none;
+    font-size:12.5px;
+    font-weight:700;
+    padding:7px 13px;
+    border-radius:var(--radius-chip);
+    transition:background .12s ease, transform .12s ease;
+  }
+  .quicknav a:hover{background:rgba(255,255,255,0.20);transform:translateY(-1px);}
+  .stat-row{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:10px;
+  }
+  .stat{
+    position:relative;
+    background:rgba(15,26,13,0.32);
+    border:1px solid rgba(255,255,255,0.10);
+    border-radius:12px;
+    padding:12px 15px 10px;
+    overflow:hidden;
+  }
+  .stat::before{
+    content:"";
+    position:absolute;
+    top:0;left:0;right:0;
+    height:3px;
+    background:var(--accent, var(--grass));
+  }
+  .stat:nth-child(1){--accent:#E3B23C;}
+  .stat:nth-child(2){--accent:#4E8FA8;}
+  .stat:nth-child(3){--accent:var(--clay);}
+  .stat .num{
+    font-size:26px;
+    font-weight:800;
+    letter-spacing:-0.01em;
+    color:#FFFFFF;
+    line-height:1.15;
+    font-variant-numeric:tabular-nums;
+  }
+  .stat .num small{font-size:13px;font-weight:600;margin-left:2px;color:#C9D6B4;}
+  .stat .label{font-size:12px;color:#C3D2AE;margin-top:3px;}
+  .updated-line{
+    margin-top:12px;
+    font-size:12px;
+    color:#C3D2AE;
+    display:flex;
+    align-items:center;
+    gap:7px;
+  }
+  .updated-dot{width:5px;height:5px;border-radius:50%;background:#9FD46A;box-shadow:0 0 0 3px rgba(159,212,106,0.25);}
+
+  /* ---------- Sections ---------- */
+  .section{margin-top:32px;margin-bottom:44px;}
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:16px;
+    flex-wrap:wrap;
+  }
+  .section-head h2{
+    font-size:20px;
+    font-weight:800;
+    margin:0;
+    color:var(--trail-deep);
+  }
+  .section-head .count-pill{
+    font-size:13px;
+    font-weight:700;
+    color:var(--trail);
+    background:var(--grass-soft);
+    padding:4px 11px;
+    border-radius:var(--radius-chip);
+  }
+  .search-box{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:8px 12px;
+    font-size:13.5px;
+    min-width:200px;
+  }
+  .search-box input{
+    border:none;outline:none;font-family:inherit;font-size:13.5px;width:100%;background:transparent;color:var(--ink);
+  }
+
+  /* individual table */
+  .table-card{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:var(--radius-card);
+    box-shadow:var(--shadow-card);
+    overflow:hidden;
+  }
+  .table-scroll{
+    max-height:560px;
+    overflow-y:auto;
+  }
+  table{width:100%;border-collapse:collapse;font-size:13.8px;}
+  thead th{
+    position:sticky;
+    top:0;
+    z-index:1;
+    text-align:left;
+    padding:12px 16px;
+    background:var(--paper-dim);
+    color:var(--ink-soft);
+    font-weight:700;
+    font-size:12.5px;
+    border-bottom:1px solid var(--line);
+    white-space:nowrap;
+  }
+  tbody td{
+    padding:11px 16px;
+    border-bottom:1px solid #EEF1E6;
+    color:var(--ink);
+  }
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:hover{background:#F8FAF3;}
+  .no-cell{color:var(--ink-soft);font-variant-numeric:tabular-nums;width:44px;}
+  .phone-cell{font-variant-numeric:tabular-nums;color:var(--ink-soft);}
+  .tag-group{
+    display:inline-block;
+    font-size:11.5px;
+    font-weight:700;
+    padding:3px 9px;
+    border-radius:var(--radius-chip);
+    background:var(--grass-soft);
+    color:var(--trail-deep);
+  }
+  .tag-none{
+    font-size:12px;
+    color:#A7B098;
+  }
+  .empty-row td{
+    text-align:center;
+    padding:36px 16px;
+    color:var(--ink-soft);
+    font-size:13.5px;
+  }
+
+  /* group cards */
+  .group-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
+    gap:14px;
+  }
+  .group-card{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:var(--radius-card);
+    box-shadow:var(--shadow-card);
+    padding:18px 20px;
+  }
+  .group-card-head{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:12px;
+    gap:10px;
+  }
+  .group-name{
+    font-size:16px;
+    font-weight:800;
+    color:var(--trail-deep);
+  }
+  .group-count{
+    font-size:12.5px;
+    font-weight:700;
+    color:#fff;
+    background:var(--trail);
+    padding:3px 10px;
+    border-radius:var(--radius-chip);
+    white-space:nowrap;
+  }
+  .member-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;}
+  .member-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    font-size:13.5px;
+    padding:6px 0;
+    border-bottom:1px dashed #EAEDE1;
+  }
+  .member-row:last-child{border-bottom:none;padding-bottom:0;}
+  .member-name{font-weight:600;color:var(--ink);}
+  .member-title{color:var(--ink-soft);font-size:12.5px;margin-left:6px;}
+  .badge-pending{
+    font-size:11px;
+    font-weight:700;
+    color:var(--clay);
+    background:var(--clay-soft);
+    padding:2px 8px;
+    border-radius:var(--radius-chip);
+  }
+  .badge-done{
+    font-size:11px;
+    font-weight:600;
+    color:#5B8A45;
+  }
+
+  .footer-note{
+    text-align:center;
+    font-size:12.5px;
+    color:var(--ink-soft);
+    padding-top:8px;
+  }
+
+  @media (max-width:640px){
+    .stat-row{grid-template-columns:repeat(2,1fr);}
+    .controls-hint{width:100%;order:99;margin:6px 0 0;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-top-row">
+      <div class="eyebrow-row">
+        <span class="season-badge">🏃 JUST WALK SEASON 5</span>
+      </div>
+      <div class="admin-tools">
+        <button class="tool-btn" id="btnTemplate" title="현재 명단이 채워진 엑셀 다운로드 (아래에 신규 인원만 추가해서 업로드)">📄 양식</button>
+        <button class="tool-btn" id="btnUpload" title="작성한 명단 엑셀 업로드">⬆ 업로드</button>
+        <input type="file" id="fileInput" accept=".xlsx,.xls">
+        <button class="tool-btn" id="btnSaveHtml" title="현재 화면 그대로 HTML로 저장">💾 저장</button>
+      </div>
+    </div>
+    <div class="title-row">
+      <h1>하이 FIVE! 원 TEAM! 접수 현황</h1>
+      <span class="deadline-chip"><span class="deadline-label">마감</span> D-<span id="deadlineText" contenteditable="true" spellcheck="false">4</span></span>
+    </div>
+    <div class="quicknav">
+      <a href="#individualSection">🚶 개인 신청 명단</a>
+      <a href="#groupSection">🤝 그룹 신청 현황</a>
+    </div>
+    <div class="stat-row" id="statRow"></div>
+    <div class="updated-line"><span class="updated-dot"></span><span id="updatedText">마지막 업데이트 —</span></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="section" id="individualSection">
+    <div class="section-head">
+      <h2>개인 신청 명단</h2>
+      <span class="count-pill" id="individualCountPill">0명</span>
+      <div class="search-box" style="margin-left:auto;">
+        🔎 <input type="text" id="individualSearch" placeholder="이름, 소속으로 검색">
+      </div>
+    </div>
+    <div class="table-card">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th class="no-cell">순번</th>
+              <th>소속</th>
+              <th>성명</th>
+              <th>호칭</th>
+              <th>휴대폰번호</th>
+              <th>그룹</th>
+            </tr>
+          </thead>
+          <tbody id="individualBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="groupSection">
+    <div class="section-head">
+      <h2>그룹 신청 현황</h2>
+      <span class="count-pill" id="groupCountPill">0개 그룹</span>
+    </div>
+    <div class="group-grid" id="groupGrid"></div>
+  </div>
+
+  <div class="footer-note">금호건설 인사총무팀 · JUST WALK Season 5 접수 현황 대시보드</div>
+</div>
+
+<script id="app-data" type="application/json">
+{
+  "lastUpdated": "2026-09-04",
+  "individuals": [
+    {
+      "no": 1,
+      "dept": "경영지원담당",
+      "name": "용현철",
+      "title": "상무",
+      "phone": "010-3213-5729",
+      "group": "이번차수진짜1등용"
+    },
+    {
+      "no": 2,
+      "dept": "기술연구소",
+      "name": "박상민",
+      "title": "수석매니저",
+      "phone": "010-4742-5253",
+      "group": ""
+    },
+    {
+      "no": 3,
+      "dept": "건축기술팀",
+      "name": "이태규",
+      "title": "수석매니저",
+      "phone": "010-9419-5886",
+      "group": ""
+    },
+    {
+      "no": 4,
+      "dept": "기술연구소",
+      "name": "송철우",
+      "title": "수석매니저",
+      "phone": "010-2641-6017",
+      "group": ""
+    },
+    {
+      "no": 5,
+      "dept": "플랜트사업팀",
+      "name": "권희덕",
+      "title": "수석매니저",
+      "phone": "010-2713-7819",
+      "group": ""
+    },
+    {
+      "no": 6,
+      "dept": "상품설계팀",
+      "name": "김광민",
+      "title": "수석매니저",
+      "phone": "010-4627-6443",
+      "group": ""
+    },
+    {
+      "no": 7,
+      "dept": "DI팀",
+      "name": "한문희",
+      "title": "수석매니저",
+      "phone": "010-9246-2198",
+      "group": ""
+    },
+    {
+      "no": 8,
+      "dept": "자금팀",
+      "name": "김윤혜",
+      "title": "매니저",
+      "phone": "010-5205-5679",
+      "group": "그룹희망"
+    },
+    {
+      "no": 9,
+      "dept": "주택개발2팀",
+      "name": "이윤식",
+      "title": "매니저",
+      "phone": "010-5400-9507",
+      "group": ""
+    },
+    {
+      "no": 10,
+      "dept": "윤리감사팀",
+      "name": "윤성",
+      "title": "수석매니저",
+      "phone": "010-9282-6934",
+      "group": ""
+    },
+    {
+      "no": 11,
+      "dept": "인사총무팀",
+      "name": "김보미",
+      "title": "매니저",
+      "phone": "010-9223-4410",
+      "group": ""
+    },
+    {
+      "no": 12,
+      "dept": "춘천만천리2단지",
+      "name": "차재환",
+      "title": "매니저",
+      "phone": "010-8306-9191",
+      "group": ""
+    },
+    {
+      "no": 13,
+      "dept": "인사총무팀",
+      "name": "이용섭",
+      "title": "수석매니저",
+      "phone": "010-7519-8454",
+      "group": "이번차수진짜1등용"
+    },
+    {
+      "no": 14,
+      "dept": "분양팀",
+      "name": "김채은",
+      "title": "매니저",
+      "phone": "010-6739-8957",
+      "group": ""
+    },
+    {
+      "no": 15,
+      "dept": "국립연천현충원",
+      "name": "하창호",
+      "title": "매니저",
+      "phone": "010-8924-3820",
+      "group": ""
+    },
+    {
+      "no": 16,
+      "dept": "과천지식S12",
+      "name": "안종현",
+      "title": "수석매니저",
+      "phone": "010-8284-7538",
+      "group": "과 천만보"
+    },
+    {
+      "no": 17,
+      "dept": "부천괴안B2BL",
+      "name": "최시훈",
+      "title": "매니저",
+      "phone": "010-5240-9154",
+      "group": ""
+    },
+    {
+      "no": 18,
+      "dept": "NSD",
+      "name": "김예슬",
+      "title": "매니저",
+      "phone": "010-9985-7602",
+      "group": "홍만보"
+    },
+    {
+      "no": 19,
+      "dept": "부산에코델타24BL",
+      "name": "신희선",
+      "title": "수석매니저",
+      "phone": "010-3039-3396",
+      "group": "신이조"
+    },
+    {
+      "no": 20,
+      "dept": "구미형곡3재건축",
+      "name": "조희진",
+      "title": "매니저",
+      "phone": "010-9991-4351",
+      "group": "신이조"
+    },
+    {
+      "no": 21,
+      "dept": "평택고덕A64BL",
+      "name": "이미향",
+      "title": "매니저",
+      "phone": "010-9494-7230",
+      "group": "신이조"
+    },
+    {
+      "no": 22,
+      "dept": "윤리감사팀",
+      "name": "이승규",
+      "title": "수석매니저",
+      "phone": "010-9384-3482",
+      "group": ""
+    },
+    {
+      "no": 23,
+      "dept": "과천공공하수TF",
+      "name": "김창희",
+      "title": "매니저",
+      "phone": "010-5767-5710",
+      "group": ""
+    },
+    {
+      "no": 24,
+      "dept": "인사총무팀",
+      "name": "차수진",
+      "title": "매니저",
+      "phone": "010-7538-6291",
+      "group": ""
+    },
+    {
+      "no": 25,
+      "dept": "도봉산옥정1공구",
+      "name": "안영섭",
+      "title": "수석매니저",
+      "phone": "010-9808-5123",
+      "group": "그룹희망"
+    },
+    {
+      "no": 26,
+      "dept": "공공업무지원팀",
+      "name": "정도규",
+      "title": "수석매니저",
+      "phone": "010-5586-7600",
+      "group": ""
+    },
+    {
+      "no": 27,
+      "dept": "강릉회산동공동주택",
+      "name": "손병규",
+      "title": "매니저",
+      "phone": "010-5315-7559",
+      "group": ""
+    },
+    {
+      "no": 28,
+      "dept": "조야동명2공구",
+      "name": "김수로",
+      "title": "매니저",
+      "phone": "010-8783-4543",
+      "group": ""
+    },
+    {
+      "no": 29,
+      "dept": "윤리감사팀",
+      "name": "박지숙",
+      "title": "수석매니저",
+      "phone": "010-5174-8401",
+      "group": ""
+    },
+    {
+      "no": 30,
+      "dept": "DI팀(고속파트)",
+      "name": "김순형",
+      "title": "매니저",
+      "phone": "010-8619-2508",
+      "group": ""
+    },
+    {
+      "no": 31,
+      "dept": "DI팀(고속파트)",
+      "name": "김광호",
+      "title": "수석매니저",
+      "phone": "010-2653-2764",
+      "group": ""
+    },
+    {
+      "no": 32,
+      "dept": "NSD",
+      "name": "배상우",
+      "title": "수석매니저",
+      "phone": "010-3695-2784",
+      "group": "홍만보"
+    },
+    {
+      "no": 33,
+      "dept": "NSD",
+      "name": "박성재",
+      "title": "매니저",
+      "phone": "010-6767-6146",
+      "group": "홍만보"
+    },
+    {
+      "no": 34,
+      "dept": "NSD",
+      "name": "이윤재",
+      "title": "매니저",
+      "phone": "010-3009-2924",
+      "group": "홍만보"
+    },
+    {
+      "no": 35,
+      "dept": "중남부영업소",
+      "name": "김채은",
+      "title": "매니저",
+      "phone": "010-8998-6322",
+      "group": "그룹희망"
+    },
+    {
+      "no": 36,
+      "dept": "NSD",
+      "name": "홍정욱",
+      "title": "수석매니저",
+      "phone": "010-9733-8750",
+      "group": "홍만보"
+    },
+    {
+      "no": 37,
+      "dept": "청주사직3재개발",
+      "name": "정연수",
+      "title": "수석매니저",
+      "phone": "010-4506-9220",
+      "group": ""
+    },
+    {
+      "no": 38,
+      "dept": "중남부영업소",
+      "name": "김영은",
+      "title": "수석매니저",
+      "phone": "010-9355-8753",
+      "group": ""
+    },
+    {
+      "no": 39,
+      "dept": "공모개발팀",
+      "name": "이상진",
+      "title": "수석매니저",
+      "phone": "010-4547-4728",
+      "group": ""
+    },
+    {
+      "no": 40,
+      "dept": "홍보IR팀",
+      "name": "최재희",
+      "title": "수석매니저",
+      "phone": "010-7700-7734",
+      "group": ""
+    },
+    {
+      "no": 41,
+      "dept": "법무팀",
+      "name": "이아영",
+      "title": "수석매니저",
+      "phone": "010-4176-4933",
+      "group": ""
+    },
+    {
+      "no": 42,
+      "dept": "도시정비2팀",
+      "name": "오경석",
+      "title": "매니저",
+      "phone": "010-6343-8608",
+      "group": ""
+    },
+    {
+      "no": 43,
+      "dept": "인사총무팀",
+      "name": "신지현",
+      "title": "매니저",
+      "phone": "010-3103-6641",
+      "group": "인총야호"
+    },
+    {
+      "no": 44,
+      "dept": "NSD",
+      "name": "한희선",
+      "title": "실장",
+      "phone": "010-3892-4916",
+      "group": "견원지간"
+    },
+    {
+      "no": 45,
+      "dept": "인사총무팀",
+      "name": "박종학",
+      "title": "수석매니저",
+      "phone": "010-9505-7754",
+      "group": "견원지간"
+    },
+    {
+      "no": 46,
+      "dept": "DI팀",
+      "name": "문종혁",
+      "title": "매니저",
+      "phone": "010-3015-9283",
+      "group": ""
+    },
+    {
+      "no": 47,
+      "dept": "동북선도시철도",
+      "name": "김성모",
+      "title": "수석매니저",
+      "phone": "010-4602-7832",
+      "group": ""
+    },
+    {
+      "no": 48,
+      "dept": "함안복합발전소",
+      "name": "이정석",
+      "title": "매니저",
+      "phone": "010-5877-5532",
+      "group": ""
+    },
+    {
+      "no": 49,
+      "dept": "인사총무팀",
+      "name": "이인행",
+      "title": "매니저",
+      "phone": "010-2430-8161",
+      "group": "견원지간"
+    },
+    {
+      "no": 50,
+      "dept": "윤리감사팀",
+      "name": "최상훈",
+      "title": "매니저",
+      "phone": "010-8720-1101",
+      "group": ""
+    },
+    {
+      "no": 51,
+      "dept": "과천지식S12",
+      "name": "김도훈",
+      "title": "수석매니저",
+      "phone": "010-5439-0396",
+      "group": "과 천만보"
+    },
+    {
+      "no": 52,
+      "dept": "DI팀",
+      "name": "이정우",
+      "title": "매니저",
+      "phone": "010-4107-8489",
+      "group": ""
+    },
+    {
+      "no": 53,
+      "dept": "자금팀",
+      "name": "송유경",
+      "title": "매니저",
+      "phone": "010-8445-8097",
+      "group": ""
+    },
+    {
+      "no": 54,
+      "dept": "의정부법조타운A",
+      "name": "이승열",
+      "title": "매니저",
+      "phone": "010-7561-4321",
+      "group": ""
+    },
+    {
+      "no": 55,
+      "dept": "순천시신청사",
+      "name": "박준우",
+      "title": "매니저",
+      "phone": "010-7770-1845",
+      "group": ""
+    },
+    {
+      "no": 56,
+      "dept": "홍보IR팀",
+      "name": "심원보",
+      "title": "수석매니저",
+      "phone": "010-9747-9746",
+      "group": ""
+    },
+    {
+      "no": 57,
+      "dept": "청주사직3재개발",
+      "name": "박재철",
+      "title": "수석매니저",
+      "phone": "010-8933-6044",
+      "group": ""
+    },
+    {
+      "no": 58,
+      "dept": "청주사직3재개발",
+      "name": "조명한",
+      "title": "수석매니저",
+      "phone": "010-7208-3957",
+      "group": ""
+    },
+    {
+      "no": 59,
+      "dept": "청주사직3재개발",
+      "name": "권나현",
+      "title": "매니저",
+      "phone": "010-8384-4408",
+      "group": ""
+    },
+    {
+      "no": 60,
+      "dept": "성남금토택지",
+      "name": "김준수",
+      "title": "매니저",
+      "phone": "010-9711-1833",
+      "group": ""
+    },
+    {
+      "no": 61,
+      "dept": "도봉산옥정1공구",
+      "name": "황수빈",
+      "title": "매니저",
+      "phone": "010-4877-8845",
+      "group": ""
+    },
+    {
+      "no": 62,
+      "dept": "공주가스발전소",
+      "name": "유재호",
+      "title": "수석매니저",
+      "phone": "010-3204-1327",
+      "group": ""
+    },
+    {
+      "no": 63,
+      "dept": "분양팀",
+      "name": "이재승",
+      "title": "수석매니저",
+      "phone": "010-2722-0501",
+      "group": ""
+    },
+    {
+      "no": 64,
+      "dept": "동북선도시철도",
+      "name": "김주용",
+      "title": "수석매니저",
+      "phone": "010-4208-1716",
+      "group": ""
+    },
+    {
+      "no": 65,
+      "dept": "청송면봉산풍력",
+      "name": "정동희",
+      "title": "수석매니저",
+      "phone": "010-5241-9716",
+      "group": ""
+    },
+    {
+      "no": 66,
+      "dept": "인사총무팀",
+      "name": "편지원",
+      "title": "매니저",
+      "phone": "010-4934-4021",
+      "group": ""
+    },
+    {
+      "no": 67,
+      "dept": "국립연천현충원",
+      "name": "한민구",
+      "title": "매니저",
+      "phone": "010-4559-1677",
+      "group": ""
+    },
+    {
+      "no": 68,
+      "dept": "세종병영시설",
+      "name": "김현",
+      "title": "매니저",
+      "phone": "010-5824-2454",
+      "group": "광윤의아이들"
+    },
+    {
+      "no": 69,
+      "dept": "대전철도차량개량",
+      "name": "변영진",
+      "title": "매니저",
+      "phone": "010-6615-1599",
+      "group": ""
+    },
+    {
+      "no": 70,
+      "dept": "청주테크노폴리스A8",
+      "name": "양진모",
+      "title": null,
+      "phone": "010-9475-0098",
+      "group": ""
+    },
+    {
+      "no": 71,
+      "dept": "홍보IR팀",
+      "name": "고준석",
+      "title": "수석매니저",
+      "phone": "010-6291-3841",
+      "group": ""
+    },
+    {
+      "no": 72,
+      "dept": "윤리감사팀",
+      "name": "정봉용",
+      "title": "수석매니저",
+      "phone": "010-5249-4320",
+      "group": ""
+    },
+    {
+      "no": 73,
+      "dept": "도봉산옥정1공구",
+      "name": "이정현",
+      "title": "수석매니저",
+      "phone": "010-7193-7778",
+      "group": "그룹희망"
+    },
+    {
+      "no": 74,
+      "dept": "세종병영시설",
+      "name": "박주호",
+      "title": "매니저",
+      "phone": "010-9121-8003",
+      "group": "광윤의아이들"
+    },
+    {
+      "no": 75,
+      "dept": "세종병영시설",
+      "name": "오현준",
+      "title": "매니저",
+      "phone": "010-4403-2023",
+      "group": "광윤의아이들"
+    },
+    {
+      "no": 76,
+      "dept": "세종병영시설",
+      "name": "김병규",
+      "title": "수석매니저",
+      "phone": "010-9750-4322",
+      "group": "광윤의아이들"
+    },
+    {
+      "no": 77,
+      "dept": "세종병영시설",
+      "name": "정오영",
+      "title": "수석매니저",
+      "phone": "010-5048-3460",
+      "group": "광윤의아이들"
+    },
+    {
+      "no": 78,
+      "dept": "동북선도시철도",
+      "name": "정석환",
+      "title": "매니저",
+      "phone": "010-3622-4610",
+      "group": ""
+    },
+    {
+      "no": 79,
+      "dept": "인사총무팀",
+      "name": "허태규",
+      "title": "수석매니저",
+      "phone": "010-5080-3355",
+      "group": ""
+    },
+    {
+      "no": 80,
+      "dept": "부산에코델타24BL",
+      "name": "정경민",
+      "title": "매니저",
+      "phone": "010-6612-0969",
+      "group": ""
+    },
+    {
+      "no": 81,
+      "dept": "공모개발팀",
+      "name": "김민재",
+      "title": "매니저",
+      "phone": "010-8534-9266",
+      "group": ""
+    },
+    {
+      "no": 82,
+      "dept": "구매품질환경팀",
+      "name": "김시진",
+      "title": "수석매니저",
+      "phone": "010-5719-8816",
+      "group": ""
+    },
+    {
+      "no": 83,
+      "dept": "부산강서전력구",
+      "name": "윤태근",
+      "title": "수석매니저",
+      "phone": "010-3009-2358",
+      "group": ""
+    },
+    {
+      "no": 84,
+      "dept": "부산강서전력구",
+      "name": "심준원",
+      "title": "수석매니저",
+      "phone": "010-8642-0515",
+      "group": ""
+    },
+    {
+      "no": 85,
+      "dept": "부산강서전력구",
+      "name": "이승민",
+      "title": "수석매니저",
+      "phone": "010-6524-2113",
+      "group": ""
+    },
+    {
+      "no": 86,
+      "dept": "부산강서전력구",
+      "name": "신성림",
+      "title": "매니저",
+      "phone": "010-3057-1250",
+      "group": ""
+    },
+    {
+      "no": 87,
+      "dept": "부산강서전력구",
+      "name": "정승남",
+      "title": "수석매니저",
+      "phone": "010-2640-6971",
+      "group": ""
+    },
+    {
+      "no": 88,
+      "dept": "평택고덕A64BL",
+      "name": "이정은",
+      "title": "매니저",
+      "phone": "010-5014-6121",
+      "group": ""
+    },
+    {
+      "no": 89,
+      "dept": "시흥거모A6BL",
+      "name": "박태현",
+      "title": "매니저",
+      "phone": "010-5619-1098",
+      "group": ""
+    },
+    {
+      "no": 90,
+      "dept": "인사총무팀",
+      "name": "김경연",
+      "title": "수석매니저",
+      "phone": "010-5231-2575",
+      "group": "이번차수진짜1등용"
+    },
+    {
+      "no": 91,
+      "dept": "인사총무팀",
+      "name": "김효주",
+      "title": "수석매니저",
+      "phone": "010-2517-5569",
+      "group": "이번차수진짜1등용"
+    },
+    {
+      "no": 92,
+      "dept": "청주테크노폴리스A7",
+      "name": "이규찬",
+      "title": "매니저",
+      "phone": "010-5467-5783",
+      "group": ""
+    },
+    {
+      "no": 93,
+      "dept": "중남부영업소",
+      "name": "천은경",
+      "title": "수석매니저",
+      "phone": "010-6359-7775",
+      "group": ""
+    },
+    {
+      "no": 94,
+      "dept": "강원랜드리모델링",
+      "name": "양은수",
+      "title": "매니저",
+      "phone": "010-8448-8239",
+      "group": ""
+    },
+    {
+      "no": 95,
+      "dept": "인사총무팀",
+      "name": "김주환",
+      "title": "매니저",
+      "phone": "010-2087-2389",
+      "group": ""
+    },
+    {
+      "no": 96,
+      "dept": "DI팀",
+      "name": "박성모",
+      "title": "수석매니저",
+      "phone": "010-3735-9252",
+      "group": ""
+    },
+    {
+      "no": 97,
+      "dept": "DI팀",
+      "name": "장연희",
+      "title": "수석매니저",
+      "phone": "010-8896-1206",
+      "group": ""
+    },
+    {
+      "no": 98,
+      "dept": "과천지식S12",
+      "name": "하지훈",
+      "title": "매니저",
+      "phone": "010-2765-7498",
+      "group": ""
+    },
+    {
+      "no": 99,
+      "dept": "청주사직3재개발",
+      "name": "진인호",
+      "title": "매니저",
+      "phone": "010-4201-3418",
+      "group": ""
+    },
+    {
+      "no": 100,
+      "dept": "인사총무팀",
+      "name": "유성환",
+      "title": "매니저",
+      "phone": "010-6553-4158",
+      "group": ""
+    },
+    {
+      "no": 101,
+      "dept": "과천지식S12",
+      "name": "최재민",
+      "title": "매니저",
+      "phone": "010-6632-9335",
+      "group": ""
+    },
+    {
+      "no": 102,
+      "dept": "자금팀",
+      "name": "최혜빈",
+      "title": "매니저",
+      "phone": "010-6210-4175",
+      "group": ""
+    },
+    {
+      "no": 103,
+      "dept": "동북선도시철도",
+      "name": "이대준",
+      "title": "수석매니저",
+      "phone": "010-8623-0852",
+      "group": ""
+    },
+    {
+      "no": 104,
+      "dept": "안전보건운영팀",
+      "name": "주현승",
+      "title": "매니저",
+      "phone": "010-8926-8066",
+      "group": ""
+    },
+    {
+      "no": 105,
+      "dept": "도봉산옥정1공구",
+      "name": "박준성",
+      "title": "수석매니저",
+      "phone": "010-8725-2624",
+      "group": ""
+    },
+    {
+      "no": 106,
+      "dept": "부산강서전력구",
+      "name": "최우혁",
+      "title": "매니저",
+      "phone": "010-5531-6202",
+      "group": ""
+    },
+    {
+      "no": 107,
+      "dept": "인사총무팀",
+      "name": "황진규",
+      "title": "매니저",
+      "phone": "010-5803-9757",
+      "group": ""
+    },
+    {
+      "no": 108,
+      "dept": "주택개발1팀",
+      "name": "정연준",
+      "title": "매니저",
+      "phone": "010-2434-0854",
+      "group": ""
+    },
+    {
+      "no": 109,
+      "dept": "울산공업용수도",
+      "name": "홍영국",
+      "title": "수석매니저",
+      "phone": "010-2432-1471",
+      "group": ""
+    },
+    {
+      "no": 110,
+      "dept": "회계팀",
+      "name": "임지영",
+      "title": "수석매니저",
+      "phone": "010-2971-8489",
+      "group": ""
+    },
+    {
+      "no": 111,
+      "dept": "인사총무팀",
+      "name": "김승주",
+      "title": "매니저",
+      "phone": "010-3462-7555",
+      "group": ""
+    },
+    {
+      "no": 112,
+      "dept": "과천지식S12",
+      "name": "이종원",
+      "title": "매니저",
+      "phone": "010-9971-5929",
+      "group": "과 천만보"
+    },
+    {
+      "no": 113,
+      "dept": "DI팀(고속파트)",
+      "name": "박재한",
+      "title": "수석매니저",
+      "phone": "010-9625-6139",
+      "group": ""
+    },
+    {
+      "no": 114,
+      "dept": "DI팀",
+      "name": "박창만",
+      "title": "매니저",
+      "phone": "010-7411-2244",
+      "group": ""
+    },
+    {
+      "no": 115,
+      "dept": "강릉회산동공동주택",
+      "name": "이홍규",
+      "title": "매니저",
+      "phone": "010-4115-3167",
+      "group": ""
+    },
+    {
+      "no": 116,
+      "dept": "부산에코델타24BL",
+      "name": "김도현",
+      "title": "매니저",
+      "phone": "010-2633-4566",
+      "group": ""
+    },
+    {
+      "no": 117,
+      "dept": "기술견적팀",
+      "name": "정상훈",
+      "title": "수석매니저",
+      "phone": "010-5893-9250",
+      "group": ""
+    },
+    {
+      "no": 118,
+      "dept": "공모개발팀",
+      "name": "하정훈",
+      "title": "매니저",
+      "phone": "010-4101-6040",
+      "group": "김이박하"
+    },
+    {
+      "no": 119,
+      "dept": "안성당왕지역주택",
+      "name": "하윤수",
+      "title": "매니저",
+      "phone": "010-8795-7648",
+      "group": "김이박하"
+    },
+    {
+      "no": 120,
+      "dept": "조천정수장막여과",
+      "name": "박소정",
+      "title": "매니저",
+      "phone": "010-3081-5285",
+      "group": ""
+    },
+    {
+      "no": 121,
+      "dept": "평택고덕A-64BL",
+      "name": "김정빈",
+      "title": "매니저",
+      "phone": "010-9230-8797",
+      "group": "김이박하"
+    },
+    {
+      "no": 122,
+      "dept": "서울대방아파트",
+      "name": "박민우",
+      "title": "매니저",
+      "phone": "010-4927-4031",
+      "group": "김이박하"
+    },
+    {
+      "no": 123,
+      "dept": "인사총무팀",
+      "name": "이신우",
+      "title": "매니저",
+      "phone": "010-9865-0615",
+      "group": "인총야호"
+    },
+    {
+      "no": 124,
+      "dept": "기술견적팀",
+      "name": "박현규",
+      "title": "매니저",
+      "phone": "010-5047-5133",
+      "group": ""
+    },
+    {
+      "no": 125,
+      "dept": "기술견적팀",
+      "name": "이강후",
+      "title": "매니저",
+      "phone": "010-3421-2409",
+      "group": "김이박하"
+    },
+    {
+      "no": 126,
+      "dept": "대전대동공동주택",
+      "name": "김성엽",
+      "title": "매니저",
+      "phone": "010-3304-1477",
+      "group": "김이박하"
+    }
+  ],
+  "groups": [
+    {
+      "no": 1,
+      "name": "인총야호",
+      "count": 8,
+      "members": [
+        {
+          "name": "한재홍",
+          "title": "수석매니저",
+          "note": "미 신청"
+        },
+        {
+          "name": "김주환",
+          "title": "매니저",
+          "note": ""
+        },
+        {
+          "name": "서승운",
+          "title": "매니저",
+          "note": "미 신청"
+        },
+        {
+          "name": "신지현",
+          "title": "매니저",
+          "note": ""
+        },
+        {
+          "name": "유성환",
+          "title": "매니저",
+          "note": ""
+        },
+        {
+          "name": "이신우",
+          "title": "매니저",
+          "note": ""
+        },
+        {
+          "name": "편지원",
+          "title": "매니저",
+          "note": ""
+        },
+        {
+          "name": "황진규",
+          "title": "매니저",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "no": 2,
+      "name": "이번차수진짜1등용",
+      "count": 8,
+      "members": [
+        {
+          "name": "용현철",
+          "title": "매니저",
+          "note": ""
+        },
+        {
+          "name": "김건엽",
+          "title": "수석매니저",
+          "note": "미 신청"
+        },
+        {
+          "name": "김경연",
+          "title": "매니저",
+          "note": ""
+        },
+        {
+          "name": "김효주",
+          "title": "매니저",
+          "note": ""
+        },
+        {
+          "name": "이용섭",
+          "title": "수석매니저",
+          "note": ""
+        },
+        {
+          "name": "김승주",
+          "title": "매니저",
+          "note": ""
+        },
+        {
+          "name": "이재엽",
+          "title": "매니저",
+          "note": "미 신청"
+        },
+        {
+          "name": "차수진",
+          "title": "수석매니저",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "no": 3,
+      "name": "홍만보",
+      "count": 5,
+      "members": [
+        {
+          "name": "홍정욱",
+          "title": "수석매니저",
+          "note": ""
+        },
+        {
+          "name": "배상우",
+          "title": "수석매니저",
+          "note": ""
+        },
+        {
+          "name": "박성재",
+          "title": "매니저",
+          "note": ""
+        },
+        {
+          "name": "김예슬",
+          "title": "매니저",
+          "note": ""
+        },
+        {
+          "name": "이윤재",
+          "title": "매니저",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "no": 4,
+      "name": "견원지간",
+      "count": 3,
+      "members": [
+        {
+          "name": "박종학",
+          "title": "수석매니저",
+          "note": ""
+        },
+        {
+          "name": "한희선",
+          "title": "실장",
+          "note": ""
+        },
+        {
+          "name": "이인행",
+          "title": "매니저",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "no": 5,
+      "name": "광윤의아이들",
+      "count": 5,
+      "members": [
+        {
+          "name": "김병규",
+          "title": "수석매니저",
+          "note": ""
+        },
+        {
+          "name": "박주호",
+          "title": "매니저",
+          "note": ""
+        },
+        {
+          "name": "오현준",
+          "title": "매니저",
+          "note": ""
+        },
+        {
+          "name": "김현",
+          "title": "매니저",
+          "note": ""
+        },
+        {
+          "name": "정오영",
+          "title": "수석매니저",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "no": 6,
+      "name": "신이조",
+      "count": 3,
+      "members": [
+        {
+          "name": "신희선",
+          "title": "수석매니저",
+          "note": ""
+        },
+        {
+          "name": "이미향",
+          "title": "매니저",
+          "note": ""
+        },
+        {
+          "name": "조희진",
+          "title": "매니저",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "no": 7,
+      "name": "과 천만보",
+      "count": 5,
+      "members": [
+        {
+          "name": "최재민",
+          "title": "매니저",
+          "note": ""
+        },
+        {
+          "name": "안종현",
+          "title": "수석매니저",
+          "note": ""
+        },
+        {
+          "name": "이종원",
+          "title": "매니저",
+          "note": ""
+        },
+        {
+          "name": "하지훈",
+          "title": "매니저",
+          "note": ""
+        },
+        {
+          "name": "김도훈",
+          "title": "수석매니저",
+          "note": ""
+        }
+      ]
+    },
+    {
+      "no": 8,
+      "name": "김이박하",
+      "count": 6,
+      "members": [
+        {
+          "name": "김정빈",
+          "title": "매니저",
+          "note": ""
+        },
+        {
+          "name": "하정훈",
+          "title": "매니저",
+          "note": ""
+        },
+        {
+          "name": "이강후",
+          "title": "매니저",
+          "note": ""
+        },
+        {
+          "name": "하윤수",
+          "title": "매니저",
+          "note": ""
+        },
+        {
+          "name": "김성엽",
+          "title": "매니저",
+          "note": ""
+        },
+        {
+          "name": "박민우",
+          "title": "매니저",
+          "note": ""
+        }
+      ]
+    }
+  ],
+  "deadlineDays": "4"
+}
+</script>
+
+<script>
+(function(){
+  "use strict";
+
+  var IGNORE_SHEET = "인사총무팀 명단";
+  var INDIVIDUAL_SHEET_NAMES = ["금호건설 개인신청자 RAW", "개인신청자", "개인 신청자"];
+  var GROUP_SHEET_NAMES = ["금호건설 그룹신청자 RAW", "그룹신청자", "그룹 신청자"];
+
+  var dataEl = document.getElementById("app-data");
+  var STATE = JSON.parse(dataEl.textContent);
+
+  function fmtDate(d){
+    var y = d.getFullYear();
+    var m = String(d.getMonth()+1).padStart(2,"0");
+    var day = String(d.getDate()).padStart(2,"0");
+    return y + "." + m + "." + day;
+  }
+
+  function fmtDateDisplay(isoLike){
+    // isoLike like 2026-09-04
+    if(!isoLike) return "-";
+    var parts = isoLike.split("-");
+    if(parts.length !== 3) return isoLike;
+    return parts[0] + "년 " + parseInt(parts[1],10) + "월 " + parseInt(parts[2],10) + "일";
+  }
+
+  function escapeHtml(str){
+    if(str === null || str === undefined) return "";
+    return String(str)
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;");
+  }
+
+  // ---------- Rendering ----------
+  function render(){
+    renderStats();
+    renderUpdated();
+    renderDeadline();
+    renderIndividuals(document.getElementById("individualSearch").value || "");
+    renderGroups();
+  }
+
+  function renderStats(){
+    var indivCount = STATE.individuals.length;
+    var groupCount = STATE.groups.length;
+    var groupMembers = STATE.groups.reduce(function(sum,g){ return sum + g.members.length; }, 0);
+
+    var statRow = document.getElementById("statRow");
+    statRow.innerHTML = [
+      statBlock("🚶", indivCount, "명", "개인 신청 인원"),
+      statBlock("🤝", groupCount, "개", "신청 그룹 수"),
+      statBlock("👥", groupMembers, "명", "그룹 소속 인원")
+    ].join("");
+  }
+
+  function statBlock(icon, num, unit, label){
+    return '<div class="stat"><div class="num">' + icon + ' ' + num + '<small>' + unit + '</small></div><div class="label">' + label + '</div></div>';
+  }
+
+  function renderUpdated(){
+    document.getElementById("updatedText").textContent = "마지막 업데이트 " + fmtDateDisplay(STATE.lastUpdated);
+  }
+
+  function renderDeadline(){
+    var el = document.getElementById("deadlineText");
+    if(el && el.textContent.trim() !== String(STATE.deadlineDays || "")){
+      el.textContent = STATE.deadlineDays || "";
+    }
+  }
+
+  function renderIndividuals(filter){
+    var body = document.getElementById("individualBody");
+    var f = (filter || "").trim().toLowerCase();
+    var rows = STATE.individuals.filter(function(p){
+      if(!f) return true;
+      return (String(p.name||"").toLowerCase().indexOf(f) > -1) ||
+             (String(p.dept||"").toLowerCase().indexOf(f) > -1) ||
+             (String(p.group||"").toLowerCase().indexOf(f) > -1);
+    });
+
+    document.getElementById("individualCountPill").textContent = STATE.individuals.length + "명";
+
+    if(rows.length === 0){
+      body.innerHTML = '<tr class="empty-row"><td colspan="6">일치하는 신청자가 없습니다.</td></tr>';
+      return;
+    }
+
+    body.innerHTML = rows.map(function(p){
+      var groupCell = p.group
+        ? '<span class="tag-group">' + escapeHtml(p.group) + '</span>'
+        : '<span class="tag-none">미지정</span>';
+      return '<tr>' +
+        '<td class="no-cell">' + escapeHtml(p.no) + '</td>' +
+        '<td>' + escapeHtml(p.dept) + '</td>' +
+        '<td>' + escapeHtml(p.name) + '</td>' +
+        '<td>' + escapeHtml(p.title) + '</td>' +
+        '<td class="phone-cell">' + escapeHtml(p.phone) + '</td>' +
+        '<td>' + groupCell + '</td>' +
+      '</tr>';
+    }).join("");
+  }
+
+  function renderGroups(){
+    document.getElementById("groupCountPill").textContent = STATE.groups.length + "개 그룹";
+    var grid = document.getElementById("groupGrid");
+
+    if(STATE.groups.length === 0){
+      grid.innerHTML = '<div class="table-card" style="padding:36px;text-align:center;color:var(--ink-soft);">아직 신청된 그룹이 없습니다.</div>';
+      return;
+    }
+
+    grid.innerHTML = STATE.groups.map(function(g){
+      var members = g.members.map(function(m){
+        var pending = m.note && m.note.replace(/\s/g,"") === "미신청";
+        var badge = pending
+          ? '<span class="badge-pending">개인접수 미완료</span>'
+          : '<span class="badge-done">접수 완료</span>';
+        return '<li class="member-row"><span><span class="member-name">' + escapeHtml(m.name) + '</span>' +
+          '<span class="member-title">' + escapeHtml(m.title) + '</span></span>' + badge + '</li>';
+      }).join("");
+
+      return '<div class="group-card">' +
+        '<div class="group-card-head"><span class="group-name">' + escapeHtml(g.name) + '</span>' +
+        '<span class="group-count">' + g.members.length + '명</span></div>' +
+        '<ul class="member-list">' + members + '</ul>' +
+      '</div>';
+    }).join("");
+  }
+
+  // ---------- Excel parsing ----------
+  function findHeaderRowIndex(rows, requiredHeader){
+    for(var i=0;i<rows.length;i++){
+      var row = rows[i];
+      for(var c=0;c<row.length;c++){
+        if(String(row[c]).trim() === requiredHeader){
+          return {rowIdx:i, colIdx:c};
+        }
+      }
+    }
+    return null;
+  }
+
+  function parseIndividualSheet(sheet){
+    var rows = XLSX.utils.sheet_to_json(sheet, {header:1, defval:null, blankrows:true});
+    var head = findHeaderRowIndex(rows, "순번");
+    if(!head) throw new Error("개인 신청자 시트에서 '순번' 헤더를 찾을 수 없습니다.");
+    var c = head.colIdx;
+    var out = [];
+    for(var i=head.rowIdx+1; i<rows.length; i++){
+      var r = rows[i] || [];
+      var no = r[c], dept = r[c+1], name = r[c+2], title = r[c+3], phone = r[c+4], group = r[c+5];
+      if(no === null || no === undefined || no === "") continue;
+      out.push({
+        no: no,
+        dept: dept || "",
+        name: name || "",
+        title: title || "",
+        phone: phone === null || phone === undefined ? "" : String(phone),
+        group: group || ""
+      });
+    }
+    return out;
+  }
+
+  function parseGroupSheet(sheet){
+    var rows = XLSX.utils.sheet_to_json(sheet, {header:1, defval:null, blankrows:true});
+    var head = findHeaderRowIndex(rows, "순번");
+    if(!head) throw new Error("그룹 신청자 시트에서 '순번' 헤더를 찾을 수 없습니다.");
+    var c = head.colIdx;
+    var groups = [];
+    var current = null;
+    for(var i=head.rowIdx+1; i<rows.length; i++){
+      var r = rows[i] || [];
+      var no = r[c], gname = r[c+1], count = r[c+2], member = r[c+3], title = r[c+4], note = r[c+5];
+      var rowIsEmpty = [no,gname,count,member,title,note].every(function(v){ return v === null || v === undefined || v === ""; });
+      if(rowIsEmpty) continue;
+      if(no !== null && no !== undefined && no !== ""){
+        current = { no:no, name: gname || "", count: count || 0, members: [] };
+        groups.push(current);
+      }
+      if(current && member){
+        current.members.push({ name: member, title: title || "", note: note || "" });
+      }
+    }
+    return groups;
+  }
+
+  function findSheetByNames(workbook, candidates){
+    for(var i=0;i<candidates.length;i++){
+      if(workbook.SheetNames.indexOf(candidates[i]) > -1){
+        return workbook.Sheets[candidates[i]];
+      }
+    }
+    return null;
+  }
+
+  function handleWorkbook(workbook){
+    var indivSheet = findSheetByNames(workbook, INDIVIDUAL_SHEET_NAMES);
+    var groupSheet = findSheetByNames(workbook, GROUP_SHEET_NAMES);
+
+    if(!indivSheet || !groupSheet){
+      // fall back: pick any two non-ignored sheets in order
+      var candidates = workbook.SheetNames.filter(function(n){ return n !== IGNORE_SHEET; });
+      if(!indivSheet && candidates[0]) indivSheet = workbook.Sheets[candidates[0]];
+      if(!groupSheet && candidates[1]) groupSheet = workbook.Sheets[candidates[1]];
+    }
+
+    if(!indivSheet || !groupSheet){
+      alert("파일에서 개인 신청자 / 그룹 신청자 시트를 찾을 수 없습니다. 양식을 확인해주세요.");
+      return;
+    }
+
+    try{
+      var individuals = parseIndividualSheet(indivSheet);
+      var groups = parseGroupSheet(groupSheet);
+      STATE.individuals = individuals;
+      STATE.groups = groups;
+      STATE.lastUpdated = fmtDate(new Date()).replace(/\./g,"-");
+      render();
+    }catch(e){
+      alert("업로드한 파일을 읽는 중 문제가 발생했습니다: " + e.message);
+    }
+  }
+
+  // ---------- Template download ----------
+  function downloadTemplate(){
+    var wb = XLSX.utils.book_new();
+
+    // 개인 신청자 시트: 현재 대시보드에 있는 전체 명단을 그대로 담아서 내려준다.
+    // 새로 접수된 사람은 이 아래에 이어서 입력한 뒤 업로드하면 된다.
+    var indivRows = [["순번","소속","성명","호칭","휴대폰번호","그룹"]];
+    STATE.individuals.forEach(function(p){
+      indivRows.push([p.no, p.dept || "", p.name || "", p.title || "", p.phone || "", p.group || ""]);
+    });
+    var nextIndivNo = STATE.individuals.length + 1;
+    indivRows.push([nextIndivNo, "(여기부터 신규 입력)", "", "", "", ""]);
+    var wsIndiv = XLSX.utils.aoa_to_sheet(indivRows);
+    wsIndiv["!cols"] = [{wch:6},{wch:20},{wch:10},{wch:12},{wch:16},{wch:20}];
+    XLSX.utils.book_append_sheet(wb, wsIndiv, "금호건설 개인신청자 RAW");
+
+    // 그룹 신청자 시트: 현재 그룹 현황을 그대로 담아서 내려준다.
+    var groupRows = [["순번","그룹명","인원수","소속인원","호칭","비고"]];
+    STATE.groups.forEach(function(g){
+      g.members.forEach(function(m, idx){
+        if(idx === 0){
+          groupRows.push([g.no, g.name, g.count, m.name, m.title || "", m.note || ""]);
+        }else{
+          groupRows.push(["", "", "", m.name, m.title || "", m.note || ""]);
+        }
+      });
+      if(g.members.length === 0){
+        groupRows.push([g.no, g.name, g.count, "", "", ""]);
+      }
+    });
+    var nextGroupNo = STATE.groups.length + 1;
+    groupRows.push([nextGroupNo, "(여기부터 신규 그룹)", "", "", "", ""]);
+    var wsGroup = XLSX.utils.aoa_to_sheet(groupRows);
+    wsGroup["!cols"] = [{wch:6},{wch:16},{wch:8},{wch:12},{wch:12},{wch:22}];
+    XLSX.utils.book_append_sheet(wb, wsGroup, "금호건설 그룹신청자 RAW");
+
+    XLSX.writeFile(wb, "JUST_WALK_신청자_명단_" + (STATE.lastUpdated || "").replace(/-/g,"") + ".xlsx");
+  }
+
+  // ---------- Save current state as standalone HTML ----------
+  function saveAsHtml(){
+    var deadlineEl = document.getElementById("deadlineText");
+    if(deadlineEl){ STATE.deadlineDays = deadlineEl.textContent.trim(); }
+    var docClone = document.documentElement.cloneNode(true);
+    var dataScript = docClone.querySelector("#app-data");
+    if(dataScript){
+      dataScript.textContent = JSON.stringify(STATE, null, 2);
+    }
+    var html = "<!DOCTYPE html>\n" + docClone.outerHTML;
+    var blob = new Blob([html], {type:"text/html;charset=utf-8"});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a");
+    var dateStr = STATE.lastUpdated || fmtDate(new Date()).replace(/\./g,"-");
+    a.href = url;
+    a.download = "JUST_WALK_접수현황_" + dateStr + ".html";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  // ---------- Events ----------
+  document.getElementById("btnTemplate").addEventListener("click", downloadTemplate);
+  document.getElementById("btnSaveHtml").addEventListener("click", saveAsHtml);
+
+  var fileInput = document.getElementById("fileInput");
+  document.getElementById("btnUpload").addEventListener("click", function(){
+    fileInput.value = "";
+    fileInput.click();
+  });
+  fileInput.addEventListener("change", function(e){
+    var file = e.target.files[0];
+    if(!file) return;
+    var reader = new FileReader();
+    reader.onload = function(evt){
+      try{
+        var data = new Uint8Array(evt.target.result);
+        var workbook = XLSX.read(data, {type:"array"});
+        handleWorkbook(workbook);
+      }catch(err){
+        alert("파일을 읽을 수 없습니다: " + err.message);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  });
+
+  document.getElementById("individualSearch").addEventListener("input", function(e){
+    renderIndividuals(e.target.value);
+  });
+
+  var deadlineEl = document.getElementById("deadlineText");
+  if(deadlineEl){
+    deadlineEl.addEventListener("input", function(){
+      STATE.deadlineDays = deadlineEl.textContent.trim();
+    });
+    deadlineEl.addEventListener("blur", function(){
+      renderDeadline();
+    });
+    deadlineEl.addEventListener("keydown", function(e){
+      if(e.key === "Enter"){ e.preventDefault(); deadlineEl.blur(); }
+    });
+  }
+
+  // Keep section headings visible below the sticky hero when using the quick-nav links
+  function updateScrollOffsets(){
+    var hero = document.querySelector(".hero");
+    if(!hero) return;
+    var offset = hero.getBoundingClientRect().height + 16;
+    ["individualSection","groupSection"].forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) el.style.scrollMarginTop = offset + "px";
+    });
+  }
+  window.addEventListener("resize", updateScrollOffsets);
+  window.addEventListener("load", updateScrollOffsets);
+  updateScrollOffsets();
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(updateScrollOffsets);
+  }
+
+  render();
+})();
+
+</script>
+
+</body>
+</html>
